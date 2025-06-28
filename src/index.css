@@ -1,0 +1,117 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Academic theme design system */
+
+@layer base {
+  :root {
+    --background: 248 250 252;
+    --foreground: 15 23 42;
+
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+
+    --primary: 14 165 233;
+    --primary-foreground: 248 250 252;
+
+    --secondary: 240 244 248;
+    --secondary-foreground: 51 65 85;
+
+    --muted: 248 250 252;
+    --muted-foreground: 100 116 139;
+
+    --accent: 240 244 248;
+    --accent-foreground: 15 23 42;
+
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
+
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 14 165 233;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 255 255 255;
+    --sidebar-foreground: 51 65 85;
+    --sidebar-primary: 14 165 233;
+    --sidebar-primary-foreground: 248 250 252;
+    --sidebar-accent: 240 244 248;
+    --sidebar-accent-foreground: 15 23 42;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 14 165 233;
+  }
+
+  .dark {
+    --background: 2 6 23;
+    --foreground: 248 250 252;
+
+    --card: 15 23 42;
+    --card-foreground: 248 250 252;
+
+    --popover: 15 23 42;
+    --popover-foreground: 248 250 252;
+
+    --primary: 56 189 248;
+    --primary-foreground: 15 23 42;
+
+    --secondary: 30 41 59;
+    --secondary-foreground: 203 213 225;
+
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+
+    --accent: 30 41 59;
+    --accent-foreground: 248 250 252;
+
+    --destructive: 220 38 38;
+    --destructive-foreground: 248 250 252;
+
+    --border: 51 65 85;
+    --input: 51 65 85;
+    --ring: 56 189 248;
+
+    --sidebar-background: 15 23 42;
+    --sidebar-foreground: 203 213 225;
+    --sidebar-primary: 56 189 248;
+    --sidebar-primary-foreground: 15 23 42;
+    --sidebar-accent: 30 41 59;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 51 65 85;
+    --sidebar-ring: 56 189 248;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+@layer components {
+  .gradient-bg {
+    background: linear-gradient(135deg, #0ea5e9 0%, #22c55e 50%, #a855f7 100%);
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-sm bg-white/80 border border-white/20;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
+  }
+  
+  .academic-gradient {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 50%, #f3e8ff 100%);
+  }
+}
