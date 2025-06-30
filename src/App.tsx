@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreateStudyGroupPage from './pages/CreateStudyGroupPage';
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails';
 
@@ -31,6 +32,16 @@ const App = () => (
                 <Profile />
               </ProtectedRoute>
             } 
+          />
+
+          // 在 Routes 中添加
+          <Route 
+            path="/create-study-group"
+            element={
+              <ProtectedRoute>
+                <CreateStudyGroupPage />
+              </ProtectedRoute>
+            }
           />
           {/* 👇 新增学习小组相关路由 */}
           {/* 学习小组列表页 */}
