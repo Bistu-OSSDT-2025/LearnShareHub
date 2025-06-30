@@ -1,5 +1,8 @@
 
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
+=======
+>>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -11,8 +14,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Clock, Users, BookOpen } from 'lucide-react';
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
 const Index = () => {
   // Mock data
   const popularSubjects = [
@@ -228,10 +234,14 @@ const Index = () => {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
+<<<<<<< HEAD
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
   <Link to="/study-group">学习小组</Link> {/* to 里填学习小组页面的路由路径 */}
 
            </h2>
+=======
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
+>>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
               <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
             </div>
             <Button variant="outline">
