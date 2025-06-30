@@ -44,5 +44,17 @@ export async function getStudyGroupById(id: string) {
   return data;
 }
 
+export async function signIn({ account, password }: { account: string, password: string }) {
+  let email = account;
+  if (!account.includes('@')) {
+    const { data, error } = await supabase.rpc('find_email_by_username', { username_param: account });
+    if (error) throw new Error(`查询用户名失败: ${error.message}`);
+    if (!data) throw new Error('用户名不存在');
+    email = data;
+  }
+
+  return supabase.auth.signInWithPassword({ email, password });
+}
+
 export { supabase } from './client';
 export type { Database } from './types';
