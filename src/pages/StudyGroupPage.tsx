@@ -130,6 +130,10 @@ export const StudyGroupPage = () => {
         >
           <Plus className="mr-2 h-4 w-4" /> 创建小组
         </Button>
+        // 新增创建按钮
+        <Button onClick={() => window.location.href = '/create-study-group'}>
+          创建新小组
+        </Button>
       </div>
 
       <Card className="mb-8">
