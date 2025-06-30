@@ -17,7 +17,7 @@ interface StudyGroupCardProps {
     creator: {
       name: string;
       avatar: string;
-    };
+    } | null;
     members: Array<{
       name: string;
       avatar: string;

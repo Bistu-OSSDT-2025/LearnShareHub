@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -9,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Clock, Users, BookOpen } from 'lucide-react';
+
+
 
 const Index = () => {
   // Mock data
@@ -225,7 +228,10 @@ const Index = () => {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+  <Link to="/study-group">学习小组</Link> {/* to 里填学习小组页面的路由路径 */}
+
+           </h2>
               <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
             </div>
             <Button variant="outline">
