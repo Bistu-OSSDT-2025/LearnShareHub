@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
-import { createStudyGroup } from '@/supabase';
+import { createStudyGroup } from '@/integrations/supabase';
 
 
 export default function CreateStudyGroupPage() {
@@ -15,9 +15,11 @@ export default function CreateStudyGroupPage() {
     try {
       await createStudyGroup({
         name: '新学习小组',
-        creator_id: user?.id || '',
+        created_by: user?.id || '',
         member_count: 1,
-        max_members: 10
+        max_members: 10,
+        description: '这是一个新的学习小组',
+        subject: '通用'
       });
       navigate('/study-groups');
     } catch (error) {

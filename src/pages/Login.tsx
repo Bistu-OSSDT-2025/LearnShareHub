@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +24,20 @@ const Login = () => {
     setError('');
 
     try {
+      let email = identifier;
+      if (!identifier.includes('@')) {
+        const { data: foundEmail, error: rpcError } = await supabase.rpc('find_email_by_username', {
+          username_param: identifier,
+        });
+
+        if (rpcError || !foundEmail) {
+          setError('用户名不存在或查询出错');
+          setIsLoading(false);
+          return;
+        }
+        email = foundEmail;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -73,15 +87,15 @@ const Login = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">邮箱地址</Label>
+              <Label htmlFor="identifier">邮箱或用户名</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="请输入您的邮箱"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="identifier"
+                  type="text"
+                  placeholder="请输入您的邮箱或用户名"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="pl-10"
                   required
                 />
