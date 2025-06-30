@@ -12,8 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails' ;
 
-import { Link } from "react-router-dom";
-<Route path="/study-group" element={<StudyGroupPage />} />
+
 
 
 const queryClient = new QueryClient();
