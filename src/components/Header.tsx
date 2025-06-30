@@ -66,16 +66,11 @@ const Header = () => {
             <Button variant="ghost" size="sm">
               科目板块
             </Button>
-<<<<<<< HEAD
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/study-group">
+            <Link to="/study-group">
+              <Button variant="ghost" size="sm">
                 学习小组
-              </Link>
-=======
-            <Button variant="ghost" size="sm">
-              学习小组
->>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
-            </Button>
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm">
               资料库
             </Button>

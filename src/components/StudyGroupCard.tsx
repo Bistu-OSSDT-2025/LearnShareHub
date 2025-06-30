@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,11 +18,7 @@ interface StudyGroupCardProps {
     creator: {
       name: string;
       avatar: string;
-<<<<<<< HEAD
-    } | null;
-=======
     };
->>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
     members: Array<{
       name: string;
       avatar: string;
@@ -33,7 +30,8 @@ interface StudyGroupCardProps {
 
 const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
   return (
-    <Card className="hover-lift group cursor-pointer h-full">
+    <Link to={`/groups/${group.id}`} className="block h-full">
+      <Card className="hover-lift group cursor-pointer h-full">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>
@@ -107,6 +105,7 @@ const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
         </Button>
       </CardContent>
     </Card>
+    </Link>
   );
 };
 
