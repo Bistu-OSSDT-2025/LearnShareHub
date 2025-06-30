@@ -17,7 +17,11 @@ interface StudyGroupCardProps {
     creator: {
       name: string;
       avatar: string;
+<<<<<<< HEAD
+    } | null;
+=======
     };
+>>>>>>> e2feb55d770525963c99e00697f1fd90188bc0e9
     members: Array<{
       name: string;
       avatar: string;
