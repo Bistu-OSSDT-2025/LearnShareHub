@@ -42,7 +42,7 @@ export const StudyGroupPage = () => {
       const { data, error } = await supabase
         .from('study_groups')
         .select(`
-          *,
+          *, image_url,
           creator:profiles(name, avatar_url),
           members:study_group_members(user_id)
         `)
@@ -54,6 +54,7 @@ export const StudyGroupPage = () => {
         if (data) {
           const formattedData = data.map(group => ({
             ...group,
+            imageUrl: group.image_url || '',
             creator: {
               name: group.creator?.name || '未知',
               avatar: group.creator?.avatar_url || '',
@@ -150,6 +151,14 @@ export const StudyGroupPage = () => {
         </CardContent>
       </Card>
 
+      {/* 添加标题部分，与首页样式一致 */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">热门学习小组</h2>
+          <p className="text-gray-600">加入活跃的学习小组，一起交流进步</p>
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -168,7 +177,7 @@ export const StudyGroupPage = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredGroups.map((group) => (
             <Link key={group.id} to={`/groups/${group.id}`}>
               <StudyGroupCard group={group} />
@@ -176,6 +185,29 @@ export const StudyGroupPage = () => {
           ))}
         </div>
       )}
+
+      {/* 添加平台数据统计部分，与首页样式一致 */}
+      <section className="bg-gray-50 rounded-2xl p-8 mt-16">
+        <h2 className="text-2xl font-bold text-center mb-8">平台数据</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-2">12,345</div>
+            <div className="text-gray-600">注册用户</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-600 mb-2">5,678</div>
+            <div className="text-gray-600">发帖数量</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-600 mb-2">89</div>
+            <div className="text-gray-600">学科板块</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-orange-600 mb-2">234</div>
+            <div className="text-gray-600">学习小组</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
