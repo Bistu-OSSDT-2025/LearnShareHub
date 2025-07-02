@@ -25,28 +25,37 @@ interface StudyGroupCardProps {
     }>;
     nextMeeting?: string;
     isJoined: boolean;
+    imageUrl?: string; // 添加图片URL属性
   };
 }
 
 const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
   return (
     <Link to={`/groups/${group.id}`} className="block h-full">
-      <Card className="hover-lift group cursor-pointer h-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-lg group-hover:text-primary transition-colors mb-2">
-              {group.name}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mb-3">
-              {group.description}
-            </p>
-            <Badge variant="outline" className="text-xs">
-              {group.subject}
-            </Badge>
-          </div>
+      <Card className="hover-lift group cursor-pointer h-full overflow-hidden">
+        {/* 添加小组图片 */}
+        <div className="h-40 w-full overflow-hidden bg-gray-100">
+          <img
+            src={group.imageUrl || '/placeholder.svg'}
+            alt={group.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
         </div>
-      </CardHeader>
+        <CardHeader className={`pb-3 ${group.imageUrl ? 'pt-4' : ''}`}>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="text-lg group-hover:text-primary transition-colors mb-2">
+                {group.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mb-3">
+                {group.description}
+              </p>
+              <Badge variant="outline" className="text-xs">
+                {group.subject}
+              </Badge>
+            </div>
+          </div>
+        </CardHeader>
       
       <CardContent className="pt-0">
         {/* Group Stats */}
