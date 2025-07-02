@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Bell, User, Menu, Plus, LogOut, Settings } from 'lucide-react';
+import { Search, Bell, Mail, User, Menu, Plus, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -15,9 +14,26 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client'; // 导入Supabase客户端实例
+import { useEffect, useRef } from 'react';
+
+// 消息类型定义
+type Message = {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  content: string;
+  created_at: string;
+  is_read: boolean;
+  sender_name: string;
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  // 使用直接导入的supabase实例
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -31,9 +47,88 @@ const Header = () => {
     return user.user_metadata?.username || user.email?.split('@')[0] || '用户';
   };
 
+  // 获取消息
+  const fetchMessages = async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('messages')
+      .select(`
+        id,
+        sender_id,
+        receiver_id,
+        content,
+        created_at,
+        is_read,
+        profiles:profiles!messages_sender_id_fkey(username)
+      `)
+      .eq('receiver_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error('获取消息失败:', error);
+      return;
+    }
+
+    const formattedMessages = data.map(msg => ({
+      ...msg,
+      sender_name: msg.profiles?.[0]?.username || '未知用户'
+    }));
+
+    setMessages(formattedMessages);
+    setUnreadCount(formattedMessages.filter(m => !m.is_read).length);
+  };
+
+  // 设置消息订阅
+  useEffect(() => {
+    if (!user) return;
+
+    // 实时消息订阅
+    const channel = supabase
+      .channel('realtime-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`
+        },
+        () => fetchMessages()
+      )
+      .subscribe();
+
+    // 初始获取消息
+    fetchMessages();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
+  // 标记消息为已读
+  const handleMessageClick = async (messageId: string) => {
+    const { error } = await supabase
+      .from('messages')
+      .update({ is_read: true })
+      .eq('id', messageId);
+
+    if (error) {
+      console.error('标记消息已读失败:', error);
+    } else {
+      fetchMessages(); // 刷新消息列表
+    }
+  };
+
+  // 滚动到底部
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px极6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and Title */}
           <div className="flex items-center space-x-4">
@@ -84,13 +179,17 @@ const Header = () => {
               发帖
             </Button>
 
-            {/* Notifications */}
-            <Button variant="outline" size="sm" className="relative">
-              <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500">
-                3
-              </Badge>
-            </Button>
+            {/* 删除通知功能 */}
+
+            {/* Messages */}
+            <Link to="/messages">
+              <Button variant="outline" size="sm" className="relative">
+                <Mail className="h-4 w-4" />
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-blue-500">
+                  {unreadCount}
+                </Badge>
+              </Button>
+            </Link>
 
             {/* User Profile */}
             {isAuthenticated ? (

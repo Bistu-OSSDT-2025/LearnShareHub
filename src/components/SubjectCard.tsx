@@ -37,7 +37,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
               <CardTitle className="text-lg group-hover:text-primary transition-colors">
                 {subject.name}
               </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1 text-blue-500">
+              <p className="text-sm text-muted-foreground mt-1">
                 {subject.description}
               </p>
             </div>
@@ -60,14 +60,14 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
 
         {/* Latest Post */}
         <div className="bg-gray-50 rounded-lg p-3 mb-4">
-          <p className="text-sm font-medium text-gray-900 mb-1 line-clamp-1 text-blue-500">
+          <p className="text-sm font-medium text-gray-900 mb-1 line-clamp-1">
             最新: {subject.latestPost.title}
           </p>
           <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-            <span className="text-black">by {subject.latestPost.author}</span>
+            <span>by {subject.latestPost.author}</span>
             <div className="flex items-center space-x-1">
               <Clock className="h-3 w-3" />
-              <span className="text-black">{subject.latestPost.time}</span>
+              <span>{subject.latestPost.time}</span>
             </div>
           </div>
         </div>
