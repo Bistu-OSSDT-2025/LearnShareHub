@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Bell, User, Menu, Plus, LogOut, Settings } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +21,43 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, signOut } = useAuth();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUnreadCount = async () => {
+      const { count, error } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', user.id)
+        .eq('is_read', false);
+
+      if (error) {
+        console.error('Error fetching unread messages count:', error);
+      } else {
+        setUnreadCount(count || 0);
+      }
+    };
+
+    fetchUnreadCount();
+
+    const channel = supabase
+      .channel('public:messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'messages' },
+        (payload) => {
+          console.log('Change received!', payload);
+          fetchUnreadCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -53,7 +91,7 @@ const Header = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="搜索学习资料、讨论帖子..."
-                className="pl-10 bg-gray-50 border-gray-200 focus:bg-white"
+                className="pl-10 bg-gray-50 border-gray-200 focus:bg-white !text-black !placeholder:text-brown-700"
               />
             </div>
           </div>
@@ -85,12 +123,16 @@ const Header = () => {
             </Button>
 
             {/* Notifications */}
-            <Button variant="outline" size="sm" className="relative">
-              <Bell className="h-4 w-4" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500">
-                3
-              </Badge>
-            </Button>
+            <Link to="/messages">
+              <Button variant="outline" size="sm" className="relative">
+                <Bell className="h-4 w-4" />
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
 
             {/* User Profile */}
             {isAuthenticated ? (
@@ -166,7 +208,7 @@ const Header = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="搜索学习资料、讨论帖子..."
-                  className="pl-10 bg-gray-50"
+                  className="pl-10 bg-gray-50 !text-black !placeholder:text-brown-700"
                 />
               </div>
               

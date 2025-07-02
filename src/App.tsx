@@ -13,6 +13,8 @@ import CreateStudyGroupPage from './pages/CreateStudyGroupPage';
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails';
 import SubjectsPage from './pages/SubjectsPage';
+import MessagesPage from "./pages/Messages";
+
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,14 @@ const App = () => (
           {/* 学习小组详情页，:id 是动态参数 */}
           <Route path="/groups/:id" element={<StudyGroupDetails />} /> 
           <Route path="/subjects" element={<SubjectsPage />} />
+          <Route 
+            path="/messages"
+            element={
+              <ProtectedRoute>
+                <MessagesPage />
+              </ProtectedRoute>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
