@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateStudyGroupPage from './pages/CreateStudyGroupPage';
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails';
+import SubjectsPage from './pages/SubjectsPage';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <Router>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
@@ -48,10 +49,11 @@ const App = () => (
           <Route path="/study-group" element={<StudyGroupPage />} /> 
           {/* 学习小组详情页，:id 是动态参数 */}
           <Route path="/groups/:id" element={<StudyGroupDetails />} /> 
+          <Route path="/subjects" element={<SubjectsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
     </TooltipProvider>
   </QueryClientProvider>
 );
