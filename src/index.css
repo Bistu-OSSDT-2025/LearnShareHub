@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --background: 248 250 252;
+    --background: 0 0% 100%;
     --foreground: 15 23 42;
 
     --card: 255 255 255;
@@ -93,7 +93,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 50%, #f3e8ff 100%);
+    @apply text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }

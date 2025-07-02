@@ -32,7 +32,7 @@ interface StudyGroupCardProps {
 const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
   return (
     <Link to={`/groups/${group.id}`} className="block h-full">
-      <Card className="hover-lift group cursor-pointer h-full overflow-hidden">
+      <Card className="hover-lift group cursor-pointer h-full overflow-hidden bg-academic-green-100">
         {/* 添加小组图片 */}
         <div className="h-40 w-full overflow-hidden bg-gray-100">
           <img
@@ -47,10 +47,10 @@ const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
               <CardTitle className="text-lg group-hover:text-primary transition-colors mb-2">
                 {group.name}
               </CardTitle>
-              <p className="text-sm text-muted-foreground mb-3">
+              <p className="text-sm text-black mb-3">
                 {group.description}
               </p>
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs text-brown-700">
                 {group.subject}
               </Badge>
             </div>
@@ -60,7 +60,7 @@ const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
       <CardContent className="pt-0">
         {/* Group Stats */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-4 text-sm text-black">
             <div className="flex items-center space-x-1">
               <Users className="h-4 w-4" />
               <span>{group.memberCount}/{group.maxMembers}</span>

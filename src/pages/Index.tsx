@@ -187,9 +187,27 @@ const Index = () => {
               <p className="text-gray-600">选择你感兴趣的学科，开始学习交流</p>
 
             </div>
-            <Link to="/popular-subjects">
-              <Button variant="outline">查看全部</Button>
-            </Link>
+            <div className="flex space-x-2">
+              {/* 保留了 main 分支的 flex 布局 */}
+
+              {/* 将 q1 的 Link 功能应用到 main 的“查看全部”按钮上 */}
+              <Link to="/popular-subjects">
+                <Button variant="outline">查看全部</Button>
+              </Link>
+
+              {/* 保留 main 分支新增的“科目板块管理”按钮 */}
+              <Link to="/subjects">
+                <Button
+                  variant="outline"
+                  className="bg-green-100 border-green-300"
+                  aria-label="科目板块管理"
+                  title="科目板块管理"
+                >
+                  <BookOpen className="h-4 w-4 mr-2 text-green-700" />
+                  <span className="font-bold text-green-700">科目板块</span>
+                </Button>
+              </Link>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
