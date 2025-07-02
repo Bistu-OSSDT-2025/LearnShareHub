@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,25 @@ export default function CreateStudyGroupPage() {
   const [description, setDescription] = useState('');
   const [subject, setSubject] = useState('');
 
+  const [members, setMembers] = useState<Array<{ name: string; class: string; studentId: string }>>([{ name: '', class: '', studentId: '' }]);
+
+  const handleAddMember = () => {
+    setMembers([...members, { name: '', class: '', studentId: '' }]);
+  };
+
+  const handleRemoveMember = (index: number) => {
+    const newMembers = [...members];
+    newMembers.splice(index, 1);
+    setMembers(newMembers);
+  };
+
+  const handleMemberChange = (index: number, field: 'name' | 'class' | 'studentId', value: string) => {
+    const newMembers = [...members];
+    newMembers[index][field] = value;
+    setMembers(newMembers);
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -26,7 +46,7 @@ export default function CreateStudyGroupPage() {
         description,
         subject,
         created_by: user.id,
-        member_count: 1,
+        member_count: members.length + 1, // 加上创建者
         max_members: 10, // 默认值
       });
       navigate('/study-groups');
@@ -79,6 +99,54 @@ export default function CreateStudyGroupPage() {
                 required
                 className="mt-1"
               />
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">小组成员信息</h3>
+              {members.map((member, index) => (
+                <div key={index} className="border p-4 rounded-md">
+                  <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700">姓名</label>
+                    <Input
+                      value={member.name}
+                      onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700">班级</label>
+                    <Input
+                      value={member.class}
+                      onChange={(e) => handleMemberChange(index, 'class', e.target.value)}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700">学号</label>
+                    <Input
+                      value={member.studentId}
+                      onChange={(e) => handleMemberChange(index, 'studentId', e.target.value)}
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  {index > 0 && (
+                    <Button
+                      onClick={() => handleRemoveMember(index)}
+                      className="mt-2 bg-red-500 text-white hover:bg-red-600"
+                    >
+                      移除成员
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button
+                onClick={handleAddMember}
+                className="mt-2 bg-green-500 text-white hover:bg-green-600"
+              >
+                添加成员
+              </Button>
             </div>
             <div className="flex justify-center">
               <Button

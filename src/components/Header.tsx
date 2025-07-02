@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Bell, Mail, User, Menu, Plus, LogOut, Settings } from 'lucide-react';
@@ -129,7 +128,7 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px极6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo and Title */}
           <div className="flex items-center space-x-4">
@@ -183,55 +182,14 @@ const Header = () => {
             {/* 删除通知功能 */}
 
             {/* Messages */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="relative">
-                  <Mail className="h-4 w-4" />
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-blue-500">
-                    {unreadCount}
-                  </Badge>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 p-2" align="end">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold">消息</h4>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/messages')}
-                className="ml-auto"
-              >
-                查看消息
+            <Link to="/messages">
+              <Button variant="outline" size="sm" className="relative">
+                <Mail className="h-4 w-4" />
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-blue-500">
+                  {unreadCount}
+                </Badge>
               </Button>
-                </div>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {messages.length === 0 ? (
-                    <div className="text-center py-4 text-gray-500">
-                      暂无新消息
-                    </div>
-                  ) : (
-                    messages.map((message) => (
-                      <div 
-                        key={message.id} 
-                        className={`p-3 rounded-lg cursor-pointer hover:bg-gray-50 ${
-                          !message.is_read ? 'bg-blue-50 border border-blue-100' : ''
-                        }`}
-                        onClick={() => handleMessageClick(message.id)}
-                      >
-                        <div className="flex justify-between items-start">
-                          <span className="font-medium">{message.sender_name}</span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(message.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                          </span>
-                        </div>
-                        <p className="text-sm mt-1 text-gray-700 truncate">{message.content}</p>
-                      </div>
-                    ))
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            </Link>
 
             {/* User Profile */}
             {isAuthenticated ? (

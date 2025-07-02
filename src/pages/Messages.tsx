@@ -1,6 +1,7 @@
+import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -23,6 +24,9 @@ const MessagesPage = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 获取所有消息
   const fetchMessages = async () => {
@@ -82,6 +86,51 @@ const MessagesPage = () => {
     }
   }, [user]);
 
+  // 标记消息为已读
+  const markMessageAsRead = async (messageId: string) => {
+    if (!user) return;
+    
+    const { error } = await supabase
+      .from('messages')
+      .update({ is_read: true })
+      .eq('id', messageId);
+
+    if (error) {
+      console.error('标记消息已读失败:', error);
+    } else {
+      // 更新本地状态
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId ? { ...msg, is_read: true } : msg
+      ));
+    }
+  };
+
+  // 处理回复
+  const handleReply = async (receiverId: string) => {
+    if (!user || !replyContent.trim()) return;
+    
+    const { error } = await supabase
+      .from('messages')
+      .insert({
+        sender_id: user.id,
+        receiver_id: receiverId,
+        content: replyContent.trim()
+      });
+
+    if (error) {
+      console.error('发送回复失败:', error);
+    } else {
+      setReplyContent('');
+      setReplyingTo(null);
+      fetchMessages(); // 刷新消息列表
+    }
+  };
+
+  // 滚动到底部
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">消息中心</h1>
@@ -119,28 +168,49 @@ const MessagesPage = () => {
                       <span className="font-medium">{message.sender_name}</span>
                       <span className="text-sm text-gray-500">
                         {format(new Date(message.created_at), 'MM/dd HH:mm')}
+                        {!message.is_read && message.receiver_id === user?.id && (
+                          <span className="ml-2 text-blue-500">• 未读</span>
+                        )}
                       </span>
                     </div>
                     <p className="mt-1 text-gray-700">{message.content}</p>
+                    
+                    {message.sender_id !== user?.id && (
+                      <div className="mt-2 flex justify-end">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            markMessageAsRead(message.id);
+                            setReplyingTo(replyingTo === message.id ? null : message.id);
+                          }}
+                        >
+                          {replyingTo === message.id ? "取消回复" : "回复"}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {replyingTo === message.id && (
+                      <div className="mt-3 flex gap-2">
+                        <Input 
+                          value={replyContent}
+                          onChange={(e) => setReplyContent(e.target.value)}
+                          placeholder={`回复 ${message.sender_name}...`}
+                        />
+                        <Button 
+                          onClick={() => handleReply(message.sender_id)}
+                          disabled={!replyContent.trim()}
+                        >
+                          发送
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          
-          <div className="mt-6 flex gap-2">
-            <Input 
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="输入消息内容..."
-            />
-            <Button 
-              onClick={() => sendMessage('SYSTEM_USER_ID')}
-              disabled={!newMessage.trim()}
-            >
-              发送
-            </Button>
-          </div>
+          <div ref={messagesEndRef} />
         </div>
       </div>
     </div>
