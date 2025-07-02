@@ -186,7 +186,37 @@ const Index = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-2">热门学科</h2>
               <p className="text-gray-600">选择你感兴趣的学科，开始学习交流</p>
             </div>
-            <Button variant="outline">查看全部</Button>
+            <div className="flex space-x-2">
+              <Button variant="outline">查看全部</Button>
+              <div className="relative">
+                <Button 
+                  variant="outline" 
+                  className="bg-green-100 border-green-300"
+                  aria-label="科目板块管理"
+                  title="科目板块管理"
+                  onClick={() => {
+                    console.log('Button clicked - current URL:', window.location.href);
+                    console.log('Window location object:', window.location);
+                    console.log('Attempting navigation to /subjects');
+                    try {
+                      const newURL = `${window.location.origin}${window.location.pathname}#/subjects`;
+                      console.log('New URL to navigate:', newURL);
+                      window.location.assign(newURL);
+                      console.log('Navigation command completed');
+                    } catch (error) {
+                      console.error('Navigation error:', error);
+                      console.trace();
+                    }
+                  }}
+                >
+                  <BookOpen className="h-4 w-4 mr-2 text-green-700" />
+                  <span className="font-bold text-green-700">科目板块</span>
+                </Button>
+                <div className="absolute -bottom-6 left-0 text-xs text-red-500">
+                  Debug: direct hash navigation
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
