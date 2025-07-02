@@ -53,7 +53,7 @@ const Header = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 placeholder="搜索学习资料、讨论帖子..."
-                className="pl-10 bg-gray-50 border-gray-200 focus:bg-white"
+                className="pl-10 bg-gray-50 border-gray-200 focus:bg-white !text-black !placeholder:text-brown-700"
               />
             </div>
           </div>
@@ -166,7 +166,7 @@ const Header = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="搜索学习资料、讨论帖子..."
-                  className="pl-10 bg-gray-50"
+                  className="pl-10 bg-gray-50 !text-black !placeholder:text-brown-700"
                 />
               </div>
               

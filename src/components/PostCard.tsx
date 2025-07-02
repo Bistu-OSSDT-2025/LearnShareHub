@@ -29,7 +29,7 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <Card className="hover-lift group cursor-pointer">
+    <Card className="hover-lift group cursor-pointer bg-academic-green-100">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -40,7 +40,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 </Badge>
               )}
               {post.isHot && (
-                <Badge variant="default" className="text-xs bg-orange-500">
+                <Badge variant="default" className="text-xs bg-academic-green-500">
                   热门
                 </Badge>
               )}
@@ -53,14 +53,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
               {post.title}
             </h3>
             
-            <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
+            <p className="text-black text-sm line-clamp-2 mb-3">
               {post.content}
             </p>
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1 mb-3">
               {post.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
+                <Badge key={index} variant="secondary" className="text-xs text-brown-700">
                   #{tag}
                 </Badge>
               ))}
@@ -79,12 +79,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             </Avatar>
             <div>
               <p className="text-sm font-medium">{post.author.name}</p>
-              <p className="text-xs text-muted-foreground">{post.author.level}</p>
+              <p className="text-xs text-black">{post.author.level}</p>
             </div>
           </div>
 
           {/* Post Stats */}
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-4 text-sm text-black">
             <div className="flex items-center space-x-1">
               <FileText className="h-4 w-4" />
               <span>{post.replies}</span>
