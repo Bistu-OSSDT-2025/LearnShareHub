@@ -66,7 +66,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
             <span>by {subject.latestPost.author}</span>
             <div className="flex items-center space-x-1">
               <Clock className="h-3 w-3" />
-              <span>{subject.latestPost.time}</span>
+              <span className="text-black">{subject.latestPost.time}</span>
             </div>
           </div>
         </div>

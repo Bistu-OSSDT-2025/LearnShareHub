@@ -1,11 +1,12 @@
-import { useState } from 'react';
+
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
-import { createStudyGroup } from '@/integrations/supabase/studyGroups';
+import { createStudyGroup } from '@/integrations/supabase';
 
 export default function CreateStudyGroupPage() {
   const { user } = useAuth();
@@ -13,6 +14,7 @@ export default function CreateStudyGroupPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [subject, setSubject] = useState('');
+
   const [members, setMembers] = useState<Array<{ name: string; class: string; studentId: string }>>([{ name: '', class: '', studentId: '' }]);
 
   const handleAddMember = () => {
@@ -31,9 +33,13 @@ export default function CreateStudyGroupPage() {
     setMembers(newMembers);
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!user) {
+      // 可以选择显示错误信息或重定向到登录页
+      return;
+    }
     try {
       await createStudyGroup({
         name,
@@ -46,6 +52,7 @@ export default function CreateStudyGroupPage() {
       navigate('/study-groups');
     } catch (error) {
       console.error('创建失败:', error);
+      // 这里可以添加用户友好的错误提示
     }
   };
 

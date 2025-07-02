@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { signIn } from '@/integrations/supabase';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,10 +24,7 @@ const Login = () => {
     setError('');
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await signIn({ account, password });
 
       if (error) {
         setError(error.message);
@@ -42,7 +39,8 @@ const Login = () => {
         navigate('/');
       }
     } catch (err) {
-      setError('登录失败，请稍后重试');
+      const errorMessage = err instanceof Error ? err.message : '登录失败，请稍后重试';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -73,15 +71,15 @@ const Login = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">邮箱地址</Label>
+              <Label htmlFor="account">邮箱或用户名</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="请输入您的邮箱"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="account"
+                  type="text"
+                  placeholder="请输入您的邮箱或用户名"
+                  value={account}
+                  onChange={(e) => setAccount(e.target.value)}
                   className="pl-10"
                   required
                 />
