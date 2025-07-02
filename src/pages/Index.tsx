@@ -14,7 +14,7 @@ import { TrendingUp, Clock, Users, BookOpen } from 'lucide-react';
 const Index = () => {
   // Mock data
   const popularSubjects = [
-    {
+    {  
       id: '1',
       name: '计算机科学',
       description: '编程、算法、软件工程等技术讨论',
@@ -185,11 +185,16 @@ const Index = () => {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">热门学科</h2>
               <p className="text-gray-600">选择你感兴趣的学科，开始学习交流</p>
+
             </div>
-            <Button variant="outline">查看全部</Button>
+            <Link to="/popular-subjects">
+              <Button variant="outline">查看全部</Button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+
             {popularSubjects.map((subject) => (
               <SubjectCard key={subject.id} subject={subject} />
             ))}
