@@ -57,8 +57,9 @@ export default function CreateStudyGroupPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <Card>
+    <div className="fixed inset-0 bg-[#F5F5F5]">
+  <div className="max-w-2xl mx-auto p-6 min-h-screen">
+      <Card className="bg-academic-blue-100">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">创建学习小组</CardTitle>
         </CardHeader>
@@ -143,7 +144,7 @@ export default function CreateStudyGroupPage() {
               ))}
               <Button
                 onClick={handleAddMember}
-                className="mt-2 bg-green-500 text-white hover:bg-green-600"
+                className="mt-2 bg-white text-gray-800 hover:bg-gray-100"
               >
                 添加成员
               </Button>
@@ -160,5 +161,6 @@ export default function CreateStudyGroupPage() {
         </CardContent>
       </Card>
     </div>
+  </div>
   );
 }
