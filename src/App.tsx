@@ -12,9 +12,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateStudyGroupPage from './pages/CreateStudyGroupPage';
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails';
+import PopularSubjectsPage from './pages/PopularSubjectsPage';
 import SubjectsPage from './pages/SubjectsPage';
 import MessagesPage from "./pages/Messages";
-
 
 const queryClient = new QueryClient();
 
@@ -61,6 +61,7 @@ const App = () => (
             }
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/popular-subjects" element={<PopularSubjectsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
