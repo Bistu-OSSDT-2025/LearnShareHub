@@ -174,7 +174,7 @@ export const StudyGroupPage = () => {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             学习小组
           </h1>
-          <p className="text-muted-foreground mt-1">加入或创建学习小组，与他人一起学习和成长</p>
+          <p className="text-black mt-1">加入或创建学习小组，与他人一起学习和成长</p>
         </div>
 
         <Link to="/create-study-group">
@@ -184,7 +184,7 @@ export const StudyGroupPage = () => {
         </Link>
       </div>
 
-      <Card className="mb-8">
+      <Card className="mb-8 bg-academic-green-100">
         <CardContent className="pt-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -192,7 +192,7 @@ export const StudyGroupPage = () => {
               placeholder="搜索学习小组..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 !placeholder:text-brown-800 !text-black"
             />
           </div>
         </CardContent>
