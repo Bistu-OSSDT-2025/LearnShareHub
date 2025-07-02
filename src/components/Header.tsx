@@ -98,20 +98,26 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              首页
-            </Button>
-            <Button variant="ghost" size="sm">
-              科目板块
-            </Button>
+            <Link to="/">
+              <Button variant="ghost" size="sm">
+                首页
+              </Button>
+            </Link>
+            <Link to="/subjects">
+              <Button variant="ghost" size="sm">
+                科目板块
+              </Button>
+            </Link>
             <Link to="/study-group">
               <Button variant="ghost" size="sm">
                 学习小组
               </Button>
             </Link>
-            <Button variant="ghost" size="sm">
-              资料库
-            </Button>
+            <Link to="/resources">
+              <Button variant="ghost" size="sm">
+                资料库
+              </Button>
+            </Link>
           </nav>
 
           {/* Right Actions */}
@@ -214,10 +220,18 @@ const Header = () => {
               
               {/* Mobile Navigation */}
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost" className="justify-start">首页</Button>
-                <Button variant="ghost" className="justify-start">科目板块</Button>
-                <Button variant="ghost" className="justify-start">学习小组</Button>
-                <Button variant="ghost" className="justify-start">资料库</Button>
+                <Link to="/">
+                  <Button variant="ghost" className="justify-start w-full">首页</Button>
+                </Link>
+                <Link to="/subjects">
+                  <Button variant="ghost" className="justify-start w-full">科目板块</Button>
+                </Link>
+                <Link to="/study-group">
+                  <Button variant="ghost" className="justify-start w-full">学习小组</Button>
+                </Link>
+                <Link to="/resources">
+                  <Button variant="ghost" className="justify-start w-full">资料库</Button>
+                </Link>
               </div>
               
               {/* Mobile New Post */}
