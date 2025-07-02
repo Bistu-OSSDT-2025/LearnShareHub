@@ -23,20 +23,72 @@ interface StudyGroup {
   } | null;
   members: Array<{
       name: string;
-       avatar: string
-       ; // ✅ 和 StudyGroupCardProps 一致
-      }>
+      avatar: string;
+  }>;
   isJoined: boolean;
   updated_at: string;
+  nextMeeting: string;
+  imageUrl: string; // 添加缺失的imageUrl属性
 }
 
 export const StudyGroupPage = () => {
-  const [studyGroups, setStudyGroups] = useState<StudyGroup[]>([]);
+  // 移动静态数据数组到状态初始化前
+  const StudyGroups = [
+    { 
+      id: '1', 
+      name: '算法刷题小组', 
+      description: '每天一道算法题，一起提升编程能力', 
+      subject: '计算机科学', 
+      memberCount: 28, 
+      maxMembers: 30, 
+      creator: { 
+        name: '算法大神', 
+        avatar: '' 
+      }, 
+      members: [ 
+        { name: 'Alice', avatar: '' }, 
+        { name: 'Bob', avatar: '' }, 
+        { name: 'Charlie', avatar: '' }, 
+        { name: 'David', avatar: '' }, 
+        { name: 'Eve', avatar: '' } 
+      ], 
+      nextMeeting: '今晚8点', 
+      isJoined: false, 
+      updated_at: new Date().toISOString(),
+      imageUrl: '' // 添加图片URL字段
+    }, 
+    { 
+      id: '2', 
+      name: '高数答疑互助', 
+      description: '高等数学学习讨论，互帮互助解决难题', 
+      subject: '数学', 
+      memberCount: 15, 
+      maxMembers: 25, 
+      creator: { 
+        name: '数学达人', 
+        avatar: '' 
+      }, 
+      members: [ 
+        { name: 'Frank', avatar: '' }, 
+        { name: 'Grace', avatar: '' }, 
+        { name: 'Henry', avatar: '' } 
+      ], 
+      nextMeeting: '明天下午2点', 
+      isJoined: true, 
+      updated_at: new Date().toISOString(),
+      imageUrl: '' // 添加图片URL字段
+    } 
+  ];
+
+  // 现在可以正确引用StudyGroups数组
+  const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(StudyGroups);
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
-  useEffect(() => {
+  // 注释掉Supabase数据获取逻辑
+  /*useEffect(() => {
     const fetchStudyGroups = async () => {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -69,7 +121,7 @@ export const StudyGroupPage = () => {
     };
 
     fetchStudyGroups();
-  }, [user]);
+  }, [user]);*/
 
   const handleCreateGroup = async () => {
     if (!user) return;
@@ -110,7 +162,6 @@ export const StudyGroupPage = () => {
       }
     }
   };
-
   const filteredGroups = studyGroups.filter(group => 
     group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     group.subject.toLowerCase().includes(searchTerm.toLowerCase())
@@ -125,15 +176,10 @@ export const StudyGroupPage = () => {
           </h1>
           <p className="text-muted-foreground mt-1">加入或创建学习小组，与他人一起学习和成长</p>
         </div>
-        <Button 
-          onClick={handleCreateGroup}
-          className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-        >
-          <Plus className="mr-2 h-4 w-4" /> 创建小组
-        </Button>
-        // 新增创建按钮
+      
+        
         <Button onClick={() => window.location.href = '/create-study-group'}>
-          创建新小组
+          创建小组
         </Button>
       </div>
 
@@ -159,57 +205,31 @@ export const StudyGroupPage = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        </div>
-      ) : filteredGroups.length === 0 ? (
-        <Card className="py-12 text-center">
-          <CardContent>
-            <h3 className="font-medium text-lg mb-2">没有找到学习小组</h3>
-            <p className="text-muted-foreground mb-6">尝试调整搜索条件或创建一个新的学习小组</p>
-            <Button 
-              variant="outline"
-              onClick={handleCreateGroup}
-            >
-              <Plus className="mr-2 h-4 w-4" /> 创建第一个小组
+        {/* 添加学习小组列表渲染代码 */}
+        {isLoading ? (
+          <div className="text-center py-10">加载中...</div>
+        ) : filteredGroups.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500 mb-4">没有找到学习小组</p>
+            <Button onClick={() => window.location.href = '/create-study-group'}>
+              创建第一个小组
             </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredGroups.map((group) => (
-            <Link key={group.id} to={`/groups/${group.id}`}>
-              <StudyGroupCard group={group} />
-            </Link>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGroups.map(group => (
+              <StudyGroupCard key={group.id} group={group} />
+            ))}
+          </div>
+        )}
 
-      {/* 添加平台数据统计部分，与首页样式一致 */}
-      <section className="bg-gray-50 rounded-2xl p-8 mt-16">
-        <h2 className="text-2xl font-bold text-center mb-8">平台数据</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">12,345</div>
-            <div className="text-gray-600">注册用户</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">5,678</div>
-            <div className="text-gray-600">发帖数量</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">89</div>
-            <div className="text-gray-600">学科板块</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-orange-600 mb-2">234</div>
-            <div className="text-gray-600">学习小组</div>
-          </div>
-        </div>
-      </section>
+     
     </div>
+    
   );
+  
+
 };
+ 
 
 export default StudyGroupPage;
