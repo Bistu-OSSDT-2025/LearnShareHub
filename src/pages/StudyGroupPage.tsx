@@ -176,21 +176,11 @@ export const StudyGroupPage = () => {
           </h1>
           <p className="text-muted-foreground mt-1">加入或创建学习小组，与他人一起学习和成长</p>
         </div>
-<<<<<<< HEAD
-        <Button 
-          onClick={handleCreateGroup}
-          className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
-        >
-          <Plus className="mr-2 h-4 w-4" /> 创建小组
-        </Button>
-=======
-
         <Link to="/create-study-group">
           <Button className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600">
             <Plus className="mr-2 h-4 w-4" /> 创建小组
           </Button>
         </Link>
->>>>>>> 87224fbdaa4cba1a89e090a9aae71493683f2966
       </div>
 
       <Card className="mb-8">
