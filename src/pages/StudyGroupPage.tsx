@@ -15,80 +15,87 @@ interface StudyGroup {
   name: string;
   description: string;
   subject: string;
-  memberCount: number;   
-  maxMembers: number;
+  max_members: number;
+  created_by: string;
   creator: {
     name: string;
     avatar: string;
   } | null;
   members: Array<{
+      user_id: string;
       name: string;
       avatar: string;
   }>;
   isJoined: boolean;
+  created_at: string;
   updated_at: string;
-  nextMeeting: string;
-  imageUrl: string; // 添加缺失的imageUrl属性
+  nextMeeting?: string;
+  image_url?: string; 
+  memberCount: number;
 }
 
 export const StudyGroupPage = () => {
   // 移动静态数据数组到状态初始化前
+  // 删除以下整个静态数据数组
   const StudyGroups = [
-    { 
-      id: '1', 
-      name: '算法刷题小组', 
-      description: '每天一道算法题，一起提升编程能力', 
-      subject: '计算机科学', 
-      memberCount: 28, 
-      maxMembers: 30, 
-      creator: { 
-        name: '算法大神', 
-        avatar: '' 
-      }, 
-      members: [ 
-        { name: 'Alice', avatar: '' }, 
-        { name: 'Bob', avatar: '' }, 
-        { name: 'Charlie', avatar: '' }, 
-        { name: 'David', avatar: '' }, 
-        { name: 'Eve', avatar: '' } 
-      ], 
-      nextMeeting: '今晚8点', 
-      isJoined: false, 
+    {
+      id: '1',
+      name: '算法刷题小组',
+      description: '每天一道算法题，一起提升编程能力',
+      subject: '计算机科学',
+      memberCount: 28,
+      max_members: 30,
+      created_by: '1',
+      created_at: new Date().toISOString(),
+      creator: {
+        name: '算法大神',
+        avatar: ''
+      },
+      members: [
+        { user_id: '1', name: 'Alice', avatar: '' },
+        { user_id: '2', name: 'Bob', avatar: '' },
+        { user_id: '3', name: 'Charlie', avatar: '' },
+        { user_id: '4', name: 'David', avatar: '' },
+        { user_id: '5', name: 'Eve', avatar: '' }
+      ],
+      nextMeeting: '今晚8点',
+      isJoined: false,
       updated_at: new Date().toISOString(),
-      imageUrl: '' // 添加图片URL字段
-    }, 
-    { 
-      id: '2', 
-      name: '高数答疑互助', 
-      description: '高等数学学习讨论，互帮互助解决难题', 
-      subject: '数学', 
-      memberCount: 15, 
-      maxMembers: 25, 
-      creator: { 
-        name: '数学达人', 
-        avatar: '' 
-      }, 
-      members: [ 
-        { name: 'Frank', avatar: '' }, 
-        { name: 'Grace', avatar: '' }, 
-        { name: 'Henry', avatar: '' } 
-      ], 
-      nextMeeting: '明天下午2点', 
-      isJoined: true, 
+      image_url: ''
+    },
+    {
+      id: '2',
+      name: '高数答疑互助',
+      description: '高等数学学习讨论，互帮互助解决难题',
+      subject: '数学',
+      memberCount: 15,
+      max_members: 25,
+      created_by: '2',
+      created_at: new Date().toISOString(),
+      creator: {
+        name: '数学达人',
+        avatar: ''
+      },
+      members: [
+        { user_id: '6', name: 'Frank', avatar: '' },
+        { user_id: '7', name: 'Grace', avatar: '' },
+        { user_id: '8', name: 'Henry', avatar: '' }
+      ],
+      nextMeeting: '明天下午2点',
+      isJoined: true,
       updated_at: new Date().toISOString(),
-      imageUrl: '' // 添加图片URL字段
-    } 
+      image_url: ''
+    }
   ];
-
-  // 现在可以正确引用StudyGroups数组
-  const [studyGroups, setStudyGroups] = useState<StudyGroup[]>(StudyGroups);
+  // 将状态初始化为空数组
+  const [studyGroups, setStudyGroups] = useState<StudyGroup[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
-  // 注释掉Supabase数据获取逻辑
-  /*useEffect(() => {
+  // 恢复Supabase数据获取逻辑
+  useEffect(() => {
     const fetchStudyGroups = async () => {
       setIsLoading(true);
       const { data, error } = await supabase
@@ -96,7 +103,10 @@ export const StudyGroupPage = () => {
         .select(`
           *, image_url,
           creator:profiles(name, avatar_url),
-          members:study_group_members(user_id)
+          members:group_members(
+            user_id,
+            user:profiles(name, avatar_url)
+          )
         `)
         .order('updated_at', { ascending: false });
       
@@ -107,12 +117,17 @@ export const StudyGroupPage = () => {
           const formattedData = data.map(group => ({
             ...group,
             imageUrl: group.image_url || '',
+            memberCount: group.members?.length || 0,
             creator: {
               name: group.creator?.name || '未知',
               avatar: group.creator?.avatar_url || '',
             },
-            members: group.members || [],
-            isJoined: group.members.some(member => member.user_id === user?.id)
+            members: group.members.map(member => ({
+              user_id: member.user_id,
+              name: member.user?.name || '未知成员',
+              avatar: member.user?.avatar_url || '/placeholder.svg'
+            })) || [],
+            isJoined: group.members?.some(member => member.user_id === user?.id) || false
           }));
           setStudyGroups(formattedData);
         }
@@ -121,7 +136,18 @@ export const StudyGroupPage = () => {
     };
 
     fetchStudyGroups();
-  }, [user]);*/
+
+    // 添加实时订阅
+    const channel = supabase.channel('study_groups_updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'study_groups'
+      }, () => {
+        fetchStudyGroups(); // 数据变化时重新获取
+      })
+      .subscribe();
+  }, [user]);
 
   const handleCreateGroup = async () => {
     if (!user) return;
@@ -141,7 +167,10 @@ export const StudyGroupPage = () => {
       .select(`
         *,
         creator:profiles(name, avatar_url),
-        members:study_group_members(user_id)
+        members:group_members(
+          user_id,
+          user:profiles(name, avatar_url)
+        )
       `)
       .single();
     
@@ -155,7 +184,11 @@ export const StudyGroupPage = () => {
             name: data.creator?.name || '未知',
             avatar: data.creator?.avatar_url || '',
           },
-          members: data.members || [],
+          members: (data.members || []).map(member => ({
+        user_id: member.user_id,
+        name: member.user?.name || '未知成员',
+        avatar: member.user?.avatar_url || '/placeholder.svg'
+      })),
           isJoined: true
         };
         setStudyGroups([formattedData, ...studyGroups]);
@@ -163,8 +196,8 @@ export const StudyGroupPage = () => {
     }
   };
   const filteredGroups = studyGroups.filter(group => 
-    group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    group.subject.toLowerCase().includes(searchTerm.toLowerCase())
+    (group.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+    (group.subject?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -212,14 +245,16 @@ export const StudyGroupPage = () => {
         ) : filteredGroups.length === 0 ? (
           <div className="text-center py-10">
             <p className="text-gray-500 mb-4">没有找到学习小组</p>
-            <Button onClick={() => window.location.href = '/create-study-group'}>
-              创建第一个小组
-            </Button>
+       
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGroups.map(group => (
-              <StudyGroupCard key={group.id} group={group} />
+              <StudyGroupCard key={group.id} group={{ 
+                ...group, 
+                maxMembers: group.max_members, 
+                imageUrl: group.image_url 
+              }} />
             ))}
           </div>
         )}

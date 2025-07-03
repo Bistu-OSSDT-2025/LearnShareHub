@@ -92,6 +92,59 @@ const Index = () => {
     }
   ];
 
+  const hotPosts = [
+    {
+      id: '1',
+      title: 'CS专业大三学生的实习经验分享：从投简历到拿到offer的完整攻略',
+      content: '作为一名刚刚结束实习的CS学生，我想把这段经历分享给大家，希望能帮到正在找实习的同学们...',
+      author: {
+        name: '科技小达人',
+        avatar: '',
+        level: 'Lv.8 学霸'
+      },
+      subject: '计算机科学',
+      createdAt: '2小时前',
+      replies: 128,
+      likes: 245,
+      views: 1567,
+      tags: ['实习', '求职', '经验分享'],
+      isHot: true
+    },
+    {
+      id: '2',
+      title: '高等数学期末复习资料整理：含历年真题和详细解答',
+      content: '整理将近年的高数期末考试真题，每道题都有详细的解题步骤，希望对大家有帮助...',
+      author: {
+        name: '数学小王子',
+        avatar: '',
+        level: 'Lv.6 学者'
+      },
+      subject: '数学',
+      createdAt: '3小时前',
+      replies: 89,
+      likes: 312,
+      views: 2134,
+      tags: ['期末复习', '真题', '高等数学'],
+      isPinned: true
+    },
+    {
+      id: '3',
+      title: '英语四级备考经验：如何在两个月内从400分提升到580分',
+      content: '分享我的四级备考心得，从词汇记忆到听力练习，从阅读技巧到写作模板...',
+      author: {
+        name: 'English Master',
+        avatar: '',
+        level: 'Lv.7 专家'
+      },
+      subject: '英语',
+      createdAt: '1天前',
+      replies: 67,
+      likes: 189,
+      views: 1289,
+      tags: ['四级', '备考', '学习方法']
+    }
+  ];
+        
   const studyGroups = [
     {
       id: '1',
@@ -222,24 +275,25 @@ const Index = () => {
 
         {/* Study Groups Section */}
         <section className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
-              <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
-            </div>
-            <Link to="/study-group">
+          {/* 将整个板块内容包裹在单个Link中 */}
+          <Link to="/study-group" className="block">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
+                <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
+              </div>
               <Button variant="outline">
                 <Users className="h-4 w-4 mr-2" />
                 创建小组
               </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {studyGroups.map((group) => (
-              <StudyGroupCard key={group.id} group={group} />
-            ))}
-          </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {studyGroups.map((group) => (
+                <StudyGroupCard key={group.id} group={group} />
+              ))}
+            </div>
+          </Link>
         </section>
 
         {/* Statistics Section */}
