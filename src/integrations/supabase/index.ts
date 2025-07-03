@@ -3,6 +3,7 @@
 import { supabase } from './client';
 import type { Database } from './types';
 export * from './studyGroups';
+export * from './storage';
 export * from './types';
 
 type StudyGroup = Database['public']['Tables']['study_groups']['Insert'];
@@ -61,4 +62,3 @@ export async function signIn({ account, password }: { account: string, password:
 }
 
 export { supabase };
-
