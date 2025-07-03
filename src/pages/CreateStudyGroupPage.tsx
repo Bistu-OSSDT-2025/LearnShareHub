@@ -7,10 +7,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { createStudyGroup } from '@/integrations/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function CreateStudyGroupPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [subject, setSubject] = useState('');
@@ -37,27 +40,52 @@ export default function CreateStudyGroupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      // 可以选择显示错误信息或重定向到登录页
+      toast({
+        title: "请先登录",
+        description: "您需要登录后才能创建学习小组。",
+        variant: "destructive",
+      });
       return;
     }
+
+    // 表单验证
+    if (!name || !subject || !description) {
+      toast({
+        title: "信息不完整",
+        description: "请填写小组名称、学科和描述。",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
       await createStudyGroup({
         name,
         description,
         subject,
         created_by: user.id,
-        member_count: members.length + 1, // 加上创建者
         max_members: 10, // 默认值
       });
-      navigate('/study-groups');
+      toast({
+        title: "创建成功",
+        description: "学习小组已成功创建！",
+      });
+      navigate('/study-group');
     } catch (error) {
       console.error('创建失败:', error);
-      // 这里可以添加用户友好的错误提示
+      toast({
+        title: "创建失败",
+        description: error instanceof Error ? error.message : '无法创建学习小组，请稍后再试。',
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-[#F5F5F5]">
+    <div className="relative min-h-screen bg-[#F5F5F5] overflow-y-auto">
   <div className="max-w-2xl mx-auto p-6 min-h-screen">
       <Card className="bg-academic-blue-100">
         <CardHeader>
@@ -153,8 +181,9 @@ export default function CreateStudyGroupPage() {
               <Button
                 type="submit"
                 className="w-full max-w-xs mt-6 bg-blue-600 text-white hover:bg-blue-700"
+                disabled={isSubmitting}
               >
-                创建小组
+                {isSubmitting ? '创建中...' : '创建小组'}
               </Button>
             </div>
           </form>
