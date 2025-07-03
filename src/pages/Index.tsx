@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { getPosts } from '@/integrations/supabase/posts';
+import { getPosts, Post } from '@/integrations/supabase/posts';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, Clock, Users, BookOpen } from 'lucide-react';
 
 const Index = () => {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -206,7 +206,16 @@ const Index = () => {
           
           <div className="space-y-4">
             {posts.slice(0, 3).map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard key={post.id} post={{
+                ...post,
+                id: post.id.toString(),
+                author: { name: 'Unknown User', avatar: '', level: 'Beginner' },
+                subject: 'General',
+                createdAt: new Date(post.created_at).toLocaleDateString(),
+                replies: 0,
+                likes: 0,
+                views: 0,
+              }} />
             ))}
           </div>
         </section>
