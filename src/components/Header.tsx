@@ -123,10 +123,12 @@ const Header = () => {
           {/* Right Actions */}
           <div className="flex items-center space-x-3">
             {/* New Post Button */}
-            <Button size="sm" className="hidden sm:flex bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600">
-              <Plus className="h-4 w-4 mr-1" />
-              发帖
-            </Button>
+            <Link to="/create-post">
+              <Button size="sm" className="hidden sm:flex bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600">
+                <Plus className="h-4 w-4 mr-1" />
+                发帖
+              </Button>
+            </Link>
 
             {/* Notifications */}
             <Link to="/messages">
@@ -235,10 +237,12 @@ const Header = () => {
               </div>
               
               {/* Mobile New Post */}
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-green-500">
-                <Plus className="h-4 w-4 mr-2" />
-                发布新帖子
-              </Button>
+              <Link to="/create-post">
+                <Button className="w-full bg-gradient-to-r from-blue-500 to-green-500">
+                  <Plus className="h-4 w-4 mr-2" />
+                  发布新帖子
+                </Button>
+              </Link>
             </div>
           </div>
         )}
