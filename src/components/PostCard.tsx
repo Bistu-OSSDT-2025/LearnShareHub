@@ -59,7 +59,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1 mb-3">
-              {post.tags.map((tag, index) => (
+              {post.tags && post.tags.map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-xs text-brown-700">
                   #{tag}
                 </Badge>

@@ -3,15 +3,19 @@ import { supabase } from './client';
 export interface Post {
   id: number;
   user_id: string;
+  subject_id: number;
   title: string;
   content: string;
+  tags: string[];
   created_at: string;
 }
 
 export interface CreatePostParams {
   user_id: string;
+  subject_id: number;
   title: string;
   content: string;
+  tags: string[];
 }
 
 export const createPost = async (post: CreatePostParams): Promise<Post> => {
