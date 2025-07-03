@@ -8,8 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { User, Mail, Calendar, Edit3, Save, X } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { User, Mail, Calendar, Edit3, Save, X, Upload } from 'lucide-react';
+import { supabase, uploadAvatar, getAvatarUrl } from '@/integrations/supabase';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 
@@ -34,6 +34,8 @@ const Profile = () => {
     username: '',
     bio: ''
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,7 +47,6 @@ const Profile = () => {
   const loadProfile = async () => {
     try {
       setIsLoading(true);
-      
       // 从用户元数据获取基本信息
       const userProfile: UserProfile = {
         id: user!.id,
@@ -54,7 +55,7 @@ const Profile = () => {
         avatar_url: user!.user_metadata?.avatar_url,
         bio: user!.user_metadata?.bio || '',
         created_at: user!.created_at,
-        updated_at: user!.updated_at || user!.created_at
+        updated_at: user!.updated_at || user!.created_at,
       };
       
       setProfile(userProfile);
@@ -119,6 +120,51 @@ const Profile = () => {
     }
     setIsEditing(false);
     setError('');
+    setAvatarFile(null);
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAvatarFile(e.target.files[0]);
+    }
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!avatarFile || !user) return;
+
+    setIsUploading(true);
+    setError('');
+
+    try {
+      const filePath = await uploadAvatar(avatarFile, user.id);
+      
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { avatar_url: filePath }
+      });
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      if (profile) {
+        setProfile({ ...profile, avatar_url: filePath });
+      }
+      
+      toast({
+        title: "头像上传成功",
+        description: "您的新头像已保存",
+      });
+      setAvatarFile(null);
+    } catch (err: any) {
+      setError(err.message || '头像上传失败');
+      toast({
+        title: "上传失败",
+        description: err.message || '无法上传您的头像，请稍后重试',
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -207,12 +253,22 @@ const Profile = () => {
               )}
               
               <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={profile.avatar_url} />
-                  <AvatarFallback className="text-lg">
-                    {profile.username[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={avatarFile ? URL.createObjectURL(avatarFile) : getAvatarUrl(profile.avatar_url || '') || undefined} />
+                    <AvatarFallback className="text-lg">
+                      {profile.username[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isEditing && (
+                    <div className="absolute bottom-0 right-0 transform translate-x-1/4 translate-y-1/4 bg-background rounded-full">
+                      <Label htmlFor="avatar-upload" className="cursor-pointer bg-primary text-primary-foreground rounded-full p-2 hover:bg-primary/90 block">
+                        <Edit3 className="h-4 w-4" />
+                      </Label>
+                      <Input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1">
                   {isEditing ? (
                     <div className="space-y-3">
@@ -234,6 +290,21 @@ const Profile = () => {
                           placeholder="介绍一下自己吧..."
                         />
                       </div>
+                      {avatarFile && (
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm text-muted-foreground truncate">
+                            已选择: {avatarFile.name}
+                          </p>
+                          <Button
+                            size="sm"
+                            onClick={handleAvatarUpload}
+                            disabled={isUploading}
+                          >
+                            <Upload className="h-4 w-4 mr-1" />
+                            {isUploading ? '上传中...' : '上传头像'}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-2">

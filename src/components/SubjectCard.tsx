@@ -24,7 +24,7 @@ interface SubjectCardProps {
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
   return (
-    <Card className="hover-lift group cursor-pointer border-0 shadow-sm hover:shadow-md bg-academic-green-100">
+    <Card className="hover-lift group cursor-pointer border-0 shadow-sm hover:shadow-md bg-[#c8e6c9]">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">            <div 

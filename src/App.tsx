@@ -12,9 +12,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateStudyGroupPage from './pages/CreateStudyGroupPage';
 import StudyGroupPage from './pages/StudyGroupPage';
 import StudyGroupDetails from './pages/StudyGroupDetails';
+import CreatePostPage from '@/pages/CreatePostPage';
 import PopularSubjectsPage from './pages/PopularSubjectsPage';
 import SubjectsPage from './pages/SubjectsPage';
 import MessagesPage from "./pages/Messages";
+import StabilityTestPage from './pages/StabilityTestPage';
 
 const queryClient = new QueryClient();
 
@@ -46,6 +48,14 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route 
+            path="/create-post"
+            element={
+              <ProtectedRoute>
+                <CreatePostPage />
+              </ProtectedRoute>
+            }
+          />
           {/* 👇 新增学习小组相关路由 */}
           {/* 学习小组列表页 */}
           <Route path="/study-group" element={<StudyGroupPage />} /> 
@@ -62,6 +72,14 @@ const App = () => (
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/popular-subjects" element={<PopularSubjectsPage />} />
+          <Route 
+            path="/stability-test"
+            element={
+              <ProtectedRoute>
+                <StabilityTestPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

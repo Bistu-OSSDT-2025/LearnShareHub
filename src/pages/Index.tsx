@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getPosts, Post } from '@/integrations/supabase/posts';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -12,7 +13,22 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, Clock, Users, BookOpen } from 'lucide-react';
 
 const Index = () => {
-  // Mock data
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getPosts();
+        setPosts(data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+    
+    fetchPosts();
+  }, []);
+
+  // Mock data for other sections
   const popularSubjects = [
     {  
       id: '1',
@@ -128,7 +144,7 @@ const Index = () => {
       tags: ['四级', '备考', '学习方法']
     }
   ];
-
+        
   const studyGroups = [
     {
       id: '1',
@@ -226,21 +242,33 @@ const Index = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-2">热门讨论</h2>
               <p className="text-gray-600">最新最热的学习话题和经验分享</p>
             </div>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm">
-                <TrendingUp className="h-4 w-4 mr-1" />
-                热门
-              </Button>
-              <Button variant="outline" size="sm">
-                <Clock className="h-4 w-4 mr-1" />
-                最新
-              </Button>
-            </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm">
+              <TrendingUp className="h-4 w-4 mr-1" />
+              热门
+            </Button>
+            <Button variant="outline" size="sm">
+              <Clock className="h-4 w-4 mr-1" />
+              最新
+            </Button>
+            <Link to="/create-post">
+              <Button size="sm">发帖</Button>
+            </Link>
+          </div>
           </div>
           
           <div className="space-y-4">
-            {hotPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
+            {posts.slice(0, 3).map((post) => (
+              <PostCard key={post.id} post={{
+                ...post,
+                id: post.id.toString(),
+                author: { name: 'Unknown User', avatar: '', level: 'Beginner' },
+                subject: 'General',
+                createdAt: new Date(post.created_at).toLocaleDateString(),
+                replies: 0,
+                likes: 0,
+                views: 0,
+              }} />
             ))}
           </div>
         </section>

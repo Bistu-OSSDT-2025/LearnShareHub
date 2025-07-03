@@ -16,7 +16,7 @@
             margin: 0 auto;
         }
         h1 {
-            color: #2e7d32;
+            color: #4A9D9A;
             text-align: center;
         }
         .subject-list {
@@ -37,9 +37,9 @@
         }
         .create-form {
             background-color: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .form-group {
@@ -48,17 +48,21 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #2e7d32;
+            color: #c8e6c9;
             font-weight: bold;
         }
         input, textarea {
             width: 100%;
             padding: 8px;
-            border: 1px solid #a5d6a7;
+            border: 1px solid #c8e6c9;
             border-radius: 4px;
         }
+        input:focus, textarea:focus {
+            border-color: #4A9D9A;
+            outline: none;
+        }
         button {
-            background-color: #2e7d32;
+            background-color: #c8e6c9;
             color: white;
             border: none;
             padding: 10px 15px;
@@ -67,7 +71,7 @@
             font-weight: bold;
         }
         button:hover {
-            background-color: #1b5e20;
+            background-color: #a5d6a7;
         }
     </style>
 </head>
@@ -76,7 +80,7 @@
         <h1>学习科目管理</h1>
         
         <div class="create-form">
-            <h2>创建新科目</h2>
+            <h2 style='color: black;'>创建新科目</h2>
             <div class="form-group">
                 <label for="subject-name">科目名称</label>
                 <input type="text" id="subject-name" placeholder="输入科目名称">
