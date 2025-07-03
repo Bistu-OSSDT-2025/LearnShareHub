@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { createStudyGroup } from '@/integrations/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase';
 
 export default function CreateStudyGroupPage() {
   const { user } = useAuth();
@@ -60,13 +61,25 @@ export default function CreateStudyGroupPage() {
 
     try {
       setIsSubmitting(true);
-      await createStudyGroup({
+      // 创建小组
+      const groupData = await createStudyGroup({
         name,
         description,
         subject,
         created_by: user.id,
         max_members: 10, // 默认值
       });
+
+      // 添加创建者为小组成员
+      if (groupData.id) {
+        await supabase
+          .from('group_members')
+          .insert([{
+            group_id: groupData.id,
+            user_id: user.id
+          }]);
+      }
+
       toast({
         title: "创建成功",
         description: "学习小组已成功创建！",

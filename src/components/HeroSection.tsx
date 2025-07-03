@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Search, BookOpen, Users, FileText, Plus } from 'lucide-react';
 
@@ -42,11 +43,13 @@ const HeroSection = () => {
             </div>
 
             <div className="text-center p-6 rounded-xl bg-white/60 backdrop-blur-sm hover-lift">
-              <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">学习小组</h3>
-              <p className="text-gray-600">组建学习小组，与志同道合的同学一起进步</p>
+              <Link to="/study-group" className="block cursor-pointer">
+                <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                  <Users className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">学习小组</h3>
+                <p className="text-gray-600">组建学习小组，与志同道合的同学一起进步</p>
+              </Link>
             </div>
 
             <div className="text-center p-6 rounded-xl bg-white/60 backdrop-blur-sm hover-lift">

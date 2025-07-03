@@ -97,7 +97,7 @@ const Index = () => {
     {
       id: '2',
       title: '高等数学期末复习资料整理：含历年真题和详细解答',
-      content: '整理了近三年的高数期末考试真题，每道题都有详细的解题步骤，希望对大家有帮助...',
+      content: '整理将近年的高数期末考试真题，每道题都有详细的解题步骤，希望对大家有帮助...',
       author: {
         name: '数学小王子',
         avatar: '',
@@ -247,24 +247,25 @@ const Index = () => {
 
         {/* Study Groups Section */}
         <section className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
-              <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
-            </div>
-            <Link to="/study-group">
+          {/* 将整个板块内容包裹在单个Link中 */}
+          <Link to="/study-group" className="block">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">学习小组</h2>
+                <p className="text-gray-600">加入学习小组，与同学们一起进步</p>
+              </div>
               <Button variant="outline">
                 <Users className="h-4 w-4 mr-2" />
                 创建小组
               </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {studyGroups.map((group) => (
-              <StudyGroupCard key={group.id} group={group} />
-            ))}
-          </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {studyGroups.map((group) => (
+                <StudyGroupCard key={group.id} group={group} />
+              ))}
+            </div>
+          </Link>
         </section>
 
         {/* Statistics Section */}

@@ -136,6 +136,17 @@ export const StudyGroupPage = () => {
     };
 
     fetchStudyGroups();
+
+    // 添加实时订阅
+    const channel = supabase.channel('study_groups_updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'study_groups'
+      }, () => {
+        fetchStudyGroups(); // 数据变化时重新获取
+      })
+      .subscribe();
   }, [user]);
 
   const handleCreateGroup = async () => {
