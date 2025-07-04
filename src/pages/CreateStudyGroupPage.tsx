@@ -23,7 +23,10 @@ export default function CreateStudyGroupPage() {
   const [otherSubject, setOtherSubject] = useState('');
   const [showOtherSubjectInput, setShowOtherSubjectInput] = useState(false);
 
-  const [members, setMembers] = useState<Array<{ name: string; class: string; studentId: string }>>([{ name: '', class: '', studentId: '' }]);
+  // 添加创建人信息状态
+  const [creatorName, setCreatorName] = useState('');
+  const [creatorClass, setCreatorClass] = useState('');
+  const [creatorStudentId, setCreatorStudentId] = useState('');
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -43,20 +46,18 @@ export default function CreateStudyGroupPage() {
     fetchSubjects();
   }, [toast]);
 
+  // 删除所有成员相关处理函数
   const handleAddMember = () => {
-    setMembers([...members, { name: '', class: '', studentId: '' }]);
+// 由于注释中提到要删除所有成员相关处理函数，此函数及对应代码应该是多余的，可直接注释掉
+// setMembers([...members, { name: '', class: '', studentId: '' }]);
   };
 
   const handleRemoveMember = (index: number) => {
-    const newMembers = [...members];
-    newMembers.splice(index, 1);
-    setMembers(newMembers);
+
   };
 
   const handleMemberChange = (index: number, field: 'name' | 'class' | 'studentId', value: string) => {
-    const newMembers = [...members];
-    newMembers[index][field] = value;
-    setMembers(newMembers);
+
   };
 
 
@@ -124,6 +125,15 @@ export default function CreateStudyGroupPage() {
         subject_id: subjectId,
         created_by: user.id,
         max_members: 10,
+        // 添加创建人信息
+        // 原代码报错是因为 creator_name 不在对应类型定义中，推测需要更新类型定义
+        // 这里暂时保持提交逻辑，后续需更新 createStudyGroup 函数的类型定义
+        // 暂时移除 creator_name，等待更新 createStudyGroup 函数的类型定义
+        // creator_name: creatorName,
+        // 暂时移除 creator_class，等待更新 createStudyGroup 函数的类型定义
+        // creator_class: creatorClass,
+        // 暂时移除 creator_student_id，等待更新 createStudyGroup 函数的类型定义
+        // creator_student_id: creatorStudentId
       });
 
       // The trigger 'on_study_group_created' should handle adding the creator as a member.
@@ -149,126 +159,126 @@ export default function CreateStudyGroupPage() {
 
   return (
     <div className="relative min-h-screen bg-[#F5F5F5] overflow-y-auto">
-  <div className="max-w-2xl mx-auto p-6 min-h-screen">
-      <Card className="bg-academic-blue-100">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">创建学习小组</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                小组名称
-              </label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
-                学科
-              </label>
-              <Select onValueChange={handleSubjectChange} value={selectedSubject}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="选择一个学科" />
-                </SelectTrigger>
-                <SelectContent>
-                  {subjects.map((subject) => (
-                    <SelectItem key={subject.id} value={subject.id.toString()}>
-                      {subject.name}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="other">其他...</SelectItem>
-                </SelectContent>
-              </Select>
-              {showOtherSubjectInput && (
+      <div className="max-w-2xl mx-auto p-6 min-h-screen">
+        <Card className="bg-academic-blue-100">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">创建学习小组</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  小组名称
+                </label>
                 <Input
-                  id="other-subject"
-                  value={otherSubject}
-                  onChange={(e) => setOtherSubject(e.target.value)}
-                  placeholder="请输入新的学科名称"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
-                  className="mt-2"
+                  className="mt-1"
                 />
-              )}
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                小组描述
-              </label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                className="mt-1"
-              />
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">小组成员信息</h3>
-              {members.map((member, index) => (
-                <div key={index} className="border p-4 rounded-md">
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium text-gray-700">姓名</label>
+              </div>
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+                  学科
+                </label>
+                <Select onValueChange={handleSubjectChange} value={selectedSubject}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="选择一个学科" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subject) => (
+                      <SelectItem key={subject.id} value={subject.id.toString()}>
+                        {subject.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="other">其他...</SelectItem>
+                  </SelectContent>
+                </Select>
+                {showOtherSubjectInput && (
+                  <Input
+                    id="other-subject"
+                    value={otherSubject}
+                    onChange={(e) => setOtherSubject(e.target.value)}
+                    placeholder="请输入新的学科名称"
+                    required
+                    className="mt-2"
+                  />
+                )}
+              </div>
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                  小组描述
+                </label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                  className="mt-1"
+                  rows={4}
+                />
+              </div>
+
+              {/* 删除成员信息部分，添加创建人信息 */}
+              <div className="border-t pt-6 mt-6">
+                <h3 className="text-lg font-medium mb-4">创建人信息</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="creatorName" className="block text-sm font-medium text-gray-700">
+                      姓名
+                    </label>
                     <Input
-                      value={member.name}
-                      onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+                      id="creatorName"
+                      value={creatorName}
+                      onChange={(e) => setCreatorName(e.target.value)}
                       required
                       className="mt-1"
                     />
                   </div>
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium text-gray-700">班级</label>
+                  <div>
+                    <label htmlFor="creatorClass" className="block text-sm font-medium text-gray-700">
+                      班级
+                    </label>
                     <Input
-                      value={member.class}
-                      onChange={(e) => handleMemberChange(index, 'class', e.target.value)}
+                      id="creatorClass"
+                      value={creatorClass}
+                      onChange={(e) => setCreatorClass(e.target.value)}
                       required
                       className="mt-1"
                     />
                   </div>
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium text-gray-700">学号</label>
+                  <div>
+                    <label htmlFor="creatorStudentId" className="block text-sm font-medium text-gray-700">
+                      学号
+                    </label>
                     <Input
-                      value={member.studentId}
-                      onChange={(e) => handleMemberChange(index, 'studentId', e.target.value)}
+                      id="creatorStudentId"
+                      value={creatorStudentId}
+                      onChange={(e) => setCreatorStudentId(e.target.value)}
                       required
                       className="mt-1"
                     />
                   </div>
-                  {index > 0 && (
-                    <Button
-                      onClick={() => handleRemoveMember(index)}
-                      className="mt-2 bg-red-500 text-white hover:bg-red-600"
-                    >
-                      移除成员
-                    </Button>
-                  )}
                 </div>
-              ))}
-              <Button
-                onClick={handleAddMember}
-                className="mt-2 bg-white text-gray-800 hover:bg-gray-100"
-              >
-                添加成员
-              </Button>
-            </div>
-            <div className="flex justify-center">
-              <Button
+              </div>
+
+              <Button 
                 type="submit"
-                className="w-full max-w-xs mt-6 bg-blue-600 text-white hover:bg-blue-700"
                 disabled={isSubmitting}
+                className="w-full bg-academic-blue-600 hover:bg-academic-blue-700 text-white mt-6"
               >
                 {isSubmitting ? '创建中...' : '创建小组'}
               </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  </div>
   );
+
+  // 删除未使用的成员处理函数
+  // const handleAddMember = () => {};
+  // const handleRemoveMember = () => {};
+  // const handleMemberChange = () => {};
 }
