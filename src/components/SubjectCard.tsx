@@ -24,11 +24,11 @@ interface SubjectCardProps {
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
   return (
-    <Card className="hover-lift group cursor-pointer border-0 shadow-sm hover:shadow-md bg-[#c8e6c9]">
+    <Card className="hover-lift group cursor-pointer border-0 shadow-sm hover:shadow-md bg-white">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">            <div 
-              className={`w-12 h-12 rounded-xl flex items-center justify-center text-academic-green-800 text-xl font-bold bg-academic-green-100`}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center text-academic-green-800 text-xl font-bold bg-white`}
             >
               {subject.icon}
             </div>
@@ -74,7 +74,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject }) => {
         {/* Tags */}
         <div className="flex flex-wrap gap-1">
           {subject.tags.map((tag, index) => (
-            <Badge key={index} variant="secondary" className="text-xs text-brown-700">
+            <Badge key={index} variant="secondary" className="text-xs text-brown-700 bg-white">
               {tag}
             </Badge>
           ))}

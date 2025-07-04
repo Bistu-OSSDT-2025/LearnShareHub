@@ -42,7 +42,7 @@ export default function SubjectSection({ title, description }: SubjectProps) {
       <p className="text-gray-600 mb-8 text-lg">{description}</p>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {subjects.map((subject) => (
-          <div key={subject.id} className={`rounded-xl overflow-hidden transition-all hover:shadow-md aspect-square ${subject.id === 1 || subject.id === 2 || subject.id === 3 || subject.id === 4 ? 'bg-[#e8f5e9]' : ''}`}>
+          <div key={subject.id} className={`rounded-xl overflow-hidden transition-all hover:shadow-md aspect-square ${subject.id === 1 || subject.id === 2 || subject.id === 3 || subject.id === 4 ? 'bg-white' : ''}`}>
             <div className={`${subject.color} p-3 text-white flex items-center`}>
               <h3 className="text-lg font-semibold">{subject.name}</h3>
             </div>
