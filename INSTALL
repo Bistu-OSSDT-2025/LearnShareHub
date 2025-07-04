@@ -1,0 +1,63 @@
+# 安装指南
+
+## 依赖环境
+
+在开始之前，请确保您的开发环境中已经安装了以下软件：
+
+*   [Node.js](https://nodejs.org/) (建议使用最新稳定版)
+*   [npm](https://www.npmjs.com/) (通常随 Node.js 一起安装) 或 [Bun](https://bun.sh/)
+
+## 安装步骤
+
+1.  **克隆仓库**
+    ```bash
+    git clone <your-repository-url>
+    cd LearnShareHub
+    ```
+
+2.  **安装项目依赖**
+    根据您使用的包管理器，选择以下命令之一：
+
+    使用 npm:
+    ```bash
+    npm install
+    ```
+
+    使用 Bun:
+    ```bash
+    bun install
+    ```
+
+## 运行项目
+
+### 开发模式
+
+在项目根目录中运行以下命令，启动开发服务器：
+
+使用 npm:
+```bash
+npm run dev
+```
+
+使用 Bun:
+```bash
+bun run dev
+```
+
+项目将在 `http://localhost:5173` (或终端中指定的其他端口) 上运行。
+
+### 生产构建
+
+要为生产环境构建项目，请运行：
+
+使用 npm:
+```bash
+npm run build
+```
+
+使用 Bun:
+```bash
+bun run build
+```
+
+构建后的文件将位于 `dist` 目录中。

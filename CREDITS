@@ -1,0 +1,25 @@
+# 贡献者名单
+
+我们衷心感谢所有为 LearnShareHub 项目做出贡献的人。
+
+## 主要贡献者
+
+*   **[Your Name / Organization]** - 项目发起和核心开发
+    *   GitHub: [github.com/your-profile](https://github.com/your-profile)
+
+## 其他贡献者
+
+*   感谢所有提交 Bug 报告、功能建议和 Pull Request 的社区成员。
+
+## 技术栈与资源
+
+本项目得以实现，离不开以下优秀的技术和资源：
+
+*   **前端框架:** [React](https://reactjs.org/)
+*   **构建工具:** [Vite](https://vitejs.dev/)
+*   **UI 库:** [Shadcn/UI](https://ui.shadcn.com/)
+*   **CSS 框架:** [Tailwind CSS](https://tailwindcss.com/)
+*   **后端服务:** [Supabase](https://supabase.com/)
+*   **图标库:** [Lucide React](https://lucide.dev/)
+
+我们对这些开源项目的作者和维护者表示诚挚的谢意。
