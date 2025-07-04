@@ -56,7 +56,7 @@ const SubjectsPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {subjects.map((subject) => (
               <Link to={`/subjects/${subject.id}`} key={subject.id}>
-                <Card className="h-full hover:shadow-lg transition-shadow">
+                <Card className="h-full hover:shadow-lg transition-shadow bg-white border-white">
                   <CardHeader>
                     <CardTitle>{subject.name}</CardTitle>
                   </CardHeader>
@@ -71,7 +71,7 @@ const SubjectsPage = () => {
 
         <div>
           <h2 className="text-2xl font-bold mb-4">创建新学科</h2>
-          <Card>
+          <Card className="bg-white border-white">
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
@@ -83,6 +83,7 @@ const SubjectsPage = () => {
                     onChange={handleInputChange}
                     placeholder="例如：线性代数"
                     required
+                    className="border-white"
                   />
                 </div>
                 <div className="mb-4">
@@ -94,6 +95,7 @@ const SubjectsPage = () => {
                     onChange={handleInputChange}
                     placeholder="简单描述一下这个学科"
                     rows={4}
+                    className="border-white"
                   />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full">
