@@ -15,6 +15,7 @@ import StudyGroupDetails from './pages/StudyGroupDetails';
 import CreatePostPage from '@/pages/CreatePostPage';
 import PopularSubjectsPage from './pages/PopularSubjectsPage';
 import SubjectsPage from './pages/SubjectsPage';
+import SubjectPage from './pages/SubjectPage';
 import MessagesPage from "./pages/Messages";
 import StabilityTestPage from './pages/StabilityTestPage';
 
@@ -62,6 +63,7 @@ const App = () => (
           {/* 学习小组详情页，:id 是动态参数 */}
           <Route path="/groups/:id" element={<StudyGroupDetails />} /> 
           <Route path="/subjects" element={<SubjectsPage />} />
+          <Route path="/subjects/:id" element={<SubjectPage />} />
           <Route 
             path="/messages"
             element={
