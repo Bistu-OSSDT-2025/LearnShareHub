@@ -289,28 +289,6 @@ const Index = () => {
           </Link>
         </section>
 
-        {/* Statistics Section */}
-        <section className="bg-gray-50 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-center mb-8">平台数据</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">12,345</div>
-              <div className="text-gray-600">注册用户</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">5,678</div>
-              <div className="text-gray-600">发帖数量</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">89</div>
-              <div className="text-gray-600">学科板块</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-600 mb-2">234</div>
-              <div className="text-gray-600">学习小组</div>
-            </div>
-          </div>
-        </section>
       </main>
 
       {/* Footer */}
