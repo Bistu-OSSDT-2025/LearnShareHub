@@ -6,7 +6,6 @@ export interface Post {
   subject_id: number;
   title: string;
   content: string;
-  tags: string[];
   created_at: string;
 }
 
@@ -15,7 +14,6 @@ export interface CreatePostParams {
   subject_id: number;
   title: string;
   content: string;
-  tags: string[];
 }
 
 export const createPost = async (post: CreatePostParams): Promise<Post> => {

@@ -1,12 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { createStudyGroup } from '@/integrations/supabase';
+import { createStudyGroup, getSubjects, createSubject, Subject } from '@/integrations/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase';
 
@@ -17,9 +18,30 @@ export default function CreateStudyGroupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [subject, setSubject] = useState('');
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [otherSubject, setOtherSubject] = useState('');
+  const [showOtherSubjectInput, setShowOtherSubjectInput] = useState(false);
 
   const [members, setMembers] = useState<Array<{ name: string; class: string; studentId: string }>>([{ name: '', class: '', studentId: '' }]);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const subjectsData = await getSubjects();
+        setSubjects(subjectsData);
+      } catch (error) {
+        console.error('Failed to fetch subjects:', error);
+        toast({
+          title: "获取学科失败",
+          description: "无法加载学科列表，请稍后重试。",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchSubjects();
+  }, [toast]);
 
   const handleAddMember = () => {
     setMembers([...members, { name: '', class: '', studentId: '' }]);
@@ -38,6 +60,16 @@ export default function CreateStudyGroupPage() {
   };
 
 
+  const handleSubjectChange = (value: string) => {
+    setSelectedSubject(value);
+    if (value === 'other') {
+      setShowOtherSubjectInput(true);
+    } else {
+      setShowOtherSubjectInput(false);
+      setOtherSubject('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -49,36 +81,54 @@ export default function CreateStudyGroupPage() {
       return;
     }
 
-    // 表单验证
-    if (!name || !subject || !description) {
+    if (!name || !description || (!selectedSubject && !otherSubject)) {
       toast({
         title: "信息不完整",
-        description: "请填写小组名称、学科和描述。",
+        description: "请填写小组名称、描述并选择或创建一个学科。",
         variant: "destructive",
       });
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      // 创建小组
+      // Check if group name already exists
+      const { data: existingGroup, error: existingGroupError } = await supabase
+        .from('study_groups')
+        .select('name')
+        .eq('name', name)
+        .single();
+
+      if (existingGroup) {
+        toast({
+          title: "创建失败",
+          description: "该学习小组名称已存在，请使用其他名称。",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      let subjectId: number;
+
+      if (showOtherSubjectInput && otherSubject) {
+        const newSubject = await createSubject({ name: otherSubject, description: '' });
+        subjectId = newSubject.id;
+      } else {
+        subjectId = parseInt(selectedSubject, 10);
+      }
+
       const groupData = await createStudyGroup({
         name,
         description,
-        subject,
+        subject_id: subjectId,
         created_by: user.id,
-        max_members: 10, // 默认值
+        max_members: 10,
       });
 
-      // 添加创建者为小组成员
-      if (groupData.id) {
-        await supabase
-          .from('group_members')
-          .insert([{
-            group_id: groupData.id,
-            user_id: user.id
-          }]);
-      }
+      // The trigger 'on_study_group_created' should handle adding the creator as a member.
+      // The explicit insertion below is redundant if the trigger is active.
+      // We'll rely on the trigger for now.
 
       toast({
         title: "创建成功",
@@ -122,13 +172,29 @@ export default function CreateStudyGroupPage() {
               <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
                 学科
               </label>
-              <Input
-                id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                required
-                className="mt-1"
-              />
+              <Select onValueChange={handleSubjectChange} value={selectedSubject}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="选择一个学科" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjects.map((subject) => (
+                    <SelectItem key={subject.id} value={subject.id.toString()}>
+                      {subject.name}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="other">其他...</SelectItem>
+                </SelectContent>
+              </Select>
+              {showOtherSubjectInput && (
+                <Input
+                  id="other-subject"
+                  value={otherSubject}
+                  onChange={(e) => setOtherSubject(e.target.value)}
+                  placeholder="请输入新的学科名称"
+                  required
+                  className="mt-2"
+                />
+              )}
             </div>
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700">

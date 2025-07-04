@@ -14,3 +14,14 @@ export const createStudyGroup = async (data: StudyGroupInsert) => {
 
   return data;
 };
+
+export const deleteStudyGroup = async (id: number) => {
+  const { error } = await supabase
+    .from('study_groups')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw error;
+  }
+};

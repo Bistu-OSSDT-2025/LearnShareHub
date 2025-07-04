@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, Calendar, BookOpen } from 'lucide-react';
+import { Users, Calendar, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface StudyGroupCardProps {
   group: {
@@ -25,14 +26,36 @@ interface StudyGroupCardProps {
     }>;
     nextMeeting?: string;
     isJoined: boolean;
-    imageUrl?: string; // 添加图片URL属性
+    imageUrl?: string;
+    created_by: string;
   };
+  onDelete: (id: string) => void;
 }
 
-const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
+const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group, onDelete }) => {
+  const { user } = useAuth();
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm(`你确定要删除小组 "${group.name}" 吗？`)) {
+      onDelete(group.id);
+    }
+  };
+
   return (
-    <Link to={`/groups/${group.id}`} className="block h-full">
-      <Card className="hover-lift group cursor-pointer h-full overflow-hidden bg-academic-green-100">
+    <Card className="hover-lift group relative h-full overflow-hidden bg-academic-green-100">
+      {user?.id === group.created_by && (
+        <Button
+          variant="destructive"
+          size="icon"
+          className="absolute top-2 right-2 z-10 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={handleDelete}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+      <Link to={`/groups/${group.id}`} className="block h-full">
         {/* 添加小组图片 */}
         <div className="h-40 w-full overflow-hidden bg-gray-100">
           <img
@@ -113,8 +136,8 @@ const StudyGroupCard: React.FC<StudyGroupCardProps> = ({ group }) => {
           {group.isJoined ? '已加入' : '加入小组'}
         </Button>
       </CardContent>
+      </Link>
     </Card>
-    </Link>
   );
 };
 

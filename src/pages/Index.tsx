@@ -157,6 +157,7 @@ const Index = () => {
         name: '算法大神',
         avatar: ''
       },
+      created_by: '1',
       members: [
         { name: 'Alice', avatar: '' },
         { name: 'Bob', avatar: '' },
@@ -178,6 +179,7 @@ const Index = () => {
         name: '数学达人',
         avatar: ''
       },
+      created_by: '2',
       members: [
         { name: 'Frank', avatar: '' },
         { name: 'Grace', avatar: '' },
@@ -262,12 +264,7 @@ const Index = () => {
               <PostCard key={post.id} post={{
                 ...post,
                 id: post.id.toString(),
-                author: { name: 'Unknown User', avatar: '', level: 'Beginner' },
-                subject: 'General',
                 createdAt: new Date(post.created_at).toLocaleDateString(),
-                replies: 0,
-                likes: 0,
-                views: 0,
               }} />
             ))}
           </div>
@@ -288,11 +285,11 @@ const Index = () => {
               </Button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {studyGroups.map((group) => (
-                <StudyGroupCard key={group.id} group={group} />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {studyGroups.map((group) => (
+              <StudyGroupCard key={group.id} group={group} onDelete={() => {}} />
+            ))}
+          </div>
           </Link>
         </section>
 

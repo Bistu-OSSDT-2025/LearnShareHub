@@ -11,17 +11,17 @@ interface PostCardProps {
     id: string;
     title: string;
     content: string;
-    author: {
+    author?: {
       name: string;
       avatar: string;
       level: string;
     };
-    subject: string;
+    subject?: string;
     createdAt: string;
-    replies: number;
-    likes: number;
-    views: number;
-    tags: string[];
+    replies?: number;
+    likes?: number;
+    views?: number;
+    tags?: string[];
     isHot?: boolean;
     isPinned?: boolean;
   };
@@ -58,13 +58,15 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
             </p>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-1 mb-3">
-              {post.tags && post.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs text-brown-700">
-                  #{tag}
-                </Badge>
-              ))}
-            </div>
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-3">
+                {post.tags.map((tag, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs text-brown-700">
+                    #{tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -72,26 +74,28 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <CardContent className="pt-0">
         <div className="flex items-center justify-between">
           {/* Author Info */}
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={post.author.avatar} />
-              <AvatarFallback>{post.author.name[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium">{post.author.name}</p>
-              <p className="text-xs text-black">{post.author.level}</p>
+          {post.author && (
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={post.author.avatar} />
+                <AvatarFallback>{post.author.name ? post.author.name[0] : 'U'}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">{post.author.name}</p>
+                <p className="text-xs text-black">{post.author.level}</p>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Post Stats */}
           <div className="flex items-center space-x-4 text-sm text-black">
             <div className="flex items-center space-x-1">
               <FileText className="h-4 w-4" />
-              <span>{post.replies}</span>
+              <span>{post.replies ?? 0}</span>
             </div>
             <div className="flex items-center space-x-1">
               <Plus className="h-4 w-4" />
-              <span>{post.likes}</span>
+              <span>{post.likes ?? 0}</span>
             </div>
             <div className="flex items-center space-x-1">
               <Clock className="h-4 w-4" />
