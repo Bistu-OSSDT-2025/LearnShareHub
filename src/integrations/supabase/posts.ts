@@ -42,7 +42,7 @@ export const getPostsBySubject = async (subjectId: number): Promise<PostWithAuth
     .from('posts')
     .select(`
       *,
-      profiles (
+      profiles:user_id (
         username,
         avatar_url
       )
@@ -62,7 +62,7 @@ export const getPosts = async (): Promise<PostWithAuthor[]> => {
     .from('posts')
     .select(`
       *,
-      profiles (
+      profiles:user_id (
         username,
         avatar_url
       )
