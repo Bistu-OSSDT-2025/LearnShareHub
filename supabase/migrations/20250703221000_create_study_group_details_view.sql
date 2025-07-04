@@ -32,3 +32,16 @@ LEFT JOIN
     auth.users creator_user ON sg.created_by = creator_user.id;
 
 COMMENT ON VIEW public.study_group_details IS 'Provides a detailed view of study groups, joining with auth.users to get user metadata.';
+
+
+-- 允许已登录用户查看所有小组
+CREATE POLICY "允许已登录用户查看小组" ON study_groups
+  FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+-- 或者只允许查看自己创建的小组和公开小组
+CREATE POLICY "允许查看自己的小组和公开小组" ON study_groups
+  FOR SELECT
+  USING (
+    auth.uid() = creator_id OR is_public = true
+  );
