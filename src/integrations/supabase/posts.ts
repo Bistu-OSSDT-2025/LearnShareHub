@@ -9,6 +9,13 @@ export interface Post {
   created_at: string;
 }
 
+export interface PostWithAuthor extends Post {
+  profiles: {
+    username: string;
+    avatar_url: string;
+  } | null;
+}
+
 export interface CreatePostParams {
   user_id: string;
   subject_id: number;
@@ -30,10 +37,36 @@ export const createPost = async (post: CreatePostParams): Promise<Post> => {
   return data;
 };
 
-export const getPosts = async (): Promise<Post[]> => {
+export const getPostsBySubject = async (subjectId: number): Promise<PostWithAuthor[]> => {
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select(`
+      *,
+      profiles (
+        username,
+        avatar_url
+      )
+    `)
+    .eq('subject_id', subjectId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw new Error(`Error fetching posts by subject: ${error.message}`);
+  }
+
+  return data;
+};
+
+export const getPosts = async (): Promise<PostWithAuthor[]> => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      profiles (
+        username,
+        avatar_url
+      )
+    `)
     .order('created_at', { ascending: false });
 
   if (error) {

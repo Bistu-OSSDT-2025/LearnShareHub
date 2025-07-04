@@ -1,95 +1,107 @@
-import { useState } from 'react';
-import SubjectSection from '@/components/SubjectSection';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getSubjects, createSubject, Subject } from '@/integrations/supabase/subjects';
 
 const SubjectsPage = () => {
-  const [subjects, setSubjects] = useState<Array<{name: string, desc: string}>>([]);
-  const [newSubject, setNewSubject] = useState({
-    name: '',
-    desc: ''
-  });
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [newSubject, setNewSubject] = useState({ name: '', description: '' });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const subjectsData = await getSubjects();
+        setSubjects(subjectsData);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
+    };
+    fetchSubjects();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewSubject(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setNewSubject(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSubject.name) return;
-    
-    setSubjects(prev => [newSubject, ...prev]);
-    setNewSubject({
-      name: '',
-      desc: ''
-    });
+
+    setLoading(true);
+    try {
+      const created = await createSubject(newSubject);
+      setSubjects(prev => [created, ...prev]);
+      setNewSubject({ name: '', description: '' });
+    } catch (error) {
+      console.error('Error creating subject:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#e8f5e9] p-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-[#4A9D9A] text-center mb-8">学习科目管理</h1>
-        
-        <div className="mb-8">
-          <SubjectSection 
-            title="科目分类" 
-            description="学科分类及其子分类"
-          />
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-black">创建新科目</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-sm font-medium text-[#c8e6c9] mb-1">
-                科目名称
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={newSubject.name}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-[#c8e6c9] rounded focus:border-[#4A9D9A] focus:outline-none"
-                placeholder="输入科目名称"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="desc" className="block text-sm font-medium text-[#c8e6c9] mb-1">
-                科目描述
-              </label>
-              <textarea
-                id="desc"
-                name="desc"
-                value={newSubject.desc}
-                onChange={handleInputChange}
-                rows={3}
-                className="w-full p-2 border border-[#c8e6c9] rounded focus:border-[#4A9D9A] focus:outline-none"
-                placeholder="输入科目描述"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-[#c8e6c9] text-white px-4 py-2 rounded hover:bg-[#a5d6a7] transition"
-            >
-              创建科目
-            </button>
-          </form>
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      <h1 className="text-3xl font-bold text-center mb-8">所有学科</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-2">
+          <h2 className="text-2xl font-bold mb-4">学科列表</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {subjects.map((subject) => (
+              <Link to={`/subjects/${subject.id}`} key={subject.id}>
+                <Card className="h-full hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <CardTitle>{subject.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">{subject.description || '暂无描述'}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {subjects.map((subject, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow hover:shadow-md transition">
-              <h3 className="text-lg font-medium">{subject.name}</h3>
-              <p className="text-gray-600 mt-2">{subject.desc || '暂无描述'}</p>
-              <p className="text-sm text-gray-400 mt-2">
-                创建时间: {new Date().toLocaleString()}
-              </p>
-            </div>
-          ))}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">创建新学科</h2>
+          <Card>
+            <CardContent className="pt-6">
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <Label htmlFor="name">学科名称</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={newSubject.name}
+                    onChange={handleInputChange}
+                    placeholder="例如：线性代数"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <Label htmlFor="description">学科描述</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={newSubject.description}
+                    onChange={handleInputChange}
+                    placeholder="简单描述一下这个学科"
+                    rows={4}
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading ? '创建中...' : '创建学科'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

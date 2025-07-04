@@ -19,6 +19,20 @@ export const getSubjects = async (): Promise<Subject[]> => {
   return data;
 };
 
+export const getSubjectById = async (id: number): Promise<Subject> => {
+  const { data, error } = await supabase
+    .from('subjects')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Error fetching subject by id: ${error.message}`);
+  }
+
+  return data;
+};
+
 export const createSubject = async (subject: Omit<Subject, 'id'>): Promise<Subject> => {
   const { data, error } = await supabase
     .from('subjects')
