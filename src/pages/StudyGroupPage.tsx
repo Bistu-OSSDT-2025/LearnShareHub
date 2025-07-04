@@ -1,201 +1,117 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Search, Plus } from 'lucide-react';
-// StudyGroupPage.tsx
-import StudyGroupCard from '@/components/StudyGroupCard'; 
+import StudyGroupCard from '@/components/StudyGroupCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { Database } from '@/integrations/supabase/types';
+import { deleteStudyGroup } from '@/integrations/supabase';
+import { useToast } from '@/components/ui/use-toast';
 
-interface StudyGroup {
+type StudyGroupFromView = Database['public']['Views']['study_group_details']['Row'];
+
+// This interface should match the structure of the data passed to the StudyGroupCard component.
+interface StudyGroupForCard {
   id: string;
   name: string;
-  description: string;
-  subject: string;
-  max_members: number;
-  created_by: string;
+  description: string | null;
+  subject: string | null;
+  memberCount: number | null;
+  maxMembers: number | null;
   creator: {
-    name: string;
-    avatar: string;
-  } | null;
-  members: Array<{
-      user_id: string;
-      name: string;
-      avatar: string;
-  }>;
+    name: string | null;
+    avatar: string | null;
+  };
+  members: {
+    name: string | null;
+    avatar: string | null;
+  }[];
   isJoined: boolean;
-  created_at: string;
-  updated_at: string;
-  nextMeeting?: string;
-  image_url?: string; 
-  memberCount: number;
+  created_by: string | null;
 }
 
 export const StudyGroupPage = () => {
-  // 移动静态数据数组到状态初始化前
-  // 删除以下整个静态数据数组
-  const StudyGroups = [
-    {
-      id: '1',
-      name: '算法刷题小组',
-      description: '每天一道算法题，一起提升编程能力',
-      subject: '计算机科学',
-      memberCount: 28,
-      max_members: 30,
-      created_by: '1',
-      created_at: new Date().toISOString(),
-      creator: {
-        name: '算法大神',
-        avatar: ''
-      },
-      members: [
-        { user_id: '1', name: 'Alice', avatar: '' },
-        { user_id: '2', name: 'Bob', avatar: '' },
-        { user_id: '3', name: 'Charlie', avatar: '' },
-        { user_id: '4', name: 'David', avatar: '' },
-        { user_id: '5', name: 'Eve', avatar: '' }
-      ],
-      nextMeeting: '今晚8点',
-      isJoined: false,
-      updated_at: new Date().toISOString(),
-      image_url: ''
-    },
-    {
-      id: '2',
-      name: '高数答疑互助',
-      description: '高等数学学习讨论，互帮互助解决难题',
-      subject: '数学',
-      memberCount: 15,
-      max_members: 25,
-      created_by: '2',
-      created_at: new Date().toISOString(),
-      creator: {
-        name: '数学达人',
-        avatar: ''
-      },
-      members: [
-        { user_id: '6', name: 'Frank', avatar: '' },
-        { user_id: '7', name: 'Grace', avatar: '' },
-        { user_id: '8', name: 'Henry', avatar: '' }
-      ],
-      nextMeeting: '明天下午2点',
-      isJoined: true,
-      updated_at: new Date().toISOString(),
-      image_url: ''
-    }
-  ];
-  // 将状态初始化为空数组
-  const [studyGroups, setStudyGroups] = useState<StudyGroup[]>([]);
-
+  const [studyGroups, setStudyGroups] = useState<StudyGroupForCard[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const { toast } = useToast();
 
-  // 恢复Supabase数据获取逻辑
+  const handleDeleteGroup = async (id: string) => {
+    try {
+      await deleteStudyGroup(parseInt(id, 10));
+      setStudyGroups(studyGroups.filter(group => group.id !== id));
+      toast({
+        title: "删除成功",
+        description: "学习小组已成功删除。",
+      });
+    } catch (error) {
+      console.error('Error deleting study group:', error);
+      toast({
+        title: "删除失败",
+        description: error instanceof Error ? error.message : "无法删除学习小组，请稍后再试。",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchStudyGroups = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('study_groups')
-        .select(`
-          *, image_url,
-          creator:profiles(name, avatar_url),
-          members:group_members(
-            user_id,
-            user:profiles(name, avatar_url)
-          )
-        `)
-        .order('updated_at', { ascending: false });
       
+      const { data, error } = await supabase
+        .from('study_group_details')
+        .select('*')
+        .order('created_at', { ascending: false });
+
       if (error) {
         console.error('Error fetching study groups:', error);
-      } else {
-        if (data) {
-          const formattedData = data.map(group => ({
-            ...group,
-            imageUrl: group.image_url || '',
-            memberCount: group.members?.length || 0,
-            creator: {
-              name: group.creator?.name || '未知',
-              avatar: group.creator?.avatar_url || '',
-            },
-            members: group.members.map(member => ({
-              user_id: member.user_id,
-              name: member.user?.name || '未知成员',
-              avatar: member.user?.avatar_url || '/placeholder.svg'
-            })) || [],
-            isJoined: group.members?.some(member => member.user_id === user?.id) || false
-          }));
-          setStudyGroups(formattedData);
-        }
+        setStudyGroups([]);
+      } else if (data) {
+        const formattedData: StudyGroupForCard[] = data.map((group: StudyGroupFromView) => ({
+          id: String(group.id),
+          name: group.name || '未命名小组',
+          description: group.description,
+          subject: group.subject_name,
+          memberCount: group.member_count,
+          maxMembers: group.max_members,
+          creator: {
+            name: group.creator_name,
+            avatar: group.creator_avatar_url,
+          },
+          members: (group.members as any[] || []).map(m => ({ name: m.name, avatar: m.avatar_url })),
+          isJoined: (group.members as any[] || []).some(m => m.user_id === user?.id),
+          created_by: group.created_by,
+        }));
+        setStudyGroups(formattedData);
       }
       setIsLoading(false);
     };
 
     fetchStudyGroups();
 
-    // 添加实时订阅
-    const channel = supabase.channel('study_groups_updates')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'study_groups'
-      }, () => {
-        fetchStudyGroups(); // 数据变化时重新获取
-      })
+    const channel = supabase.channel('study_groups_realtime_channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'study_groups' },
+        () => fetchStudyGroups()
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'group_members' },
+        () => fetchStudyGroups()
+      )
       .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
-  const handleCreateGroup = async () => {
-    if (!user) return;
-
-    const newGroup = {
-      name: '新学习小组',
-      description: '这是一个新的学习小组',
-      subject: '编程',
-      member_count: 1,
-      max_members: 10,
-      created_by: user.id,
-    };
-
-    const { data, error } = await supabase
-      .from('study_groups')
-      .insert([newGroup])
-      .select(`
-        *,
-        creator:profiles(name, avatar_url),
-        members:group_members(
-          user_id,
-          user:profiles(name, avatar_url)
-        )
-      `)
-      .single();
-    
-    if (error) {
-      console.error('Error creating study group:', error);
-    } else {
-      if (data) {
-        const formattedData = {
-          ...data,
-          creator: {
-            name: data.creator?.name || '未知',
-            avatar: data.creator?.avatar_url || '',
-          },
-          members: (data.members || []).map(member => ({
-        user_id: member.user_id,
-        name: member.user?.name || '未知成员',
-        avatar: member.user?.avatar_url || '/placeholder.svg'
-      })),
-          isJoined: true
-        };
-        setStudyGroups([formattedData, ...studyGroups]);
-      }
-    }
-  };
-  const filteredGroups = studyGroups.filter(group => 
+  const filteredGroups = studyGroups.filter(group =>
     (group.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (group.subject?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
@@ -231,7 +147,6 @@ export const StudyGroupPage = () => {
         </CardContent>
       </Card>
 
-      {/* 添加标题部分，与首页样式一致 */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">热门学习小组</h2>
@@ -239,33 +154,21 @@ export const StudyGroupPage = () => {
         </div>
       </div>
 
-        {/* 添加学习小组列表渲染代码 */}
         {isLoading ? (
           <div className="text-center py-10">加载中...</div>
         ) : filteredGroups.length === 0 ? (
           <div className="text-center py-10">
             <p className="text-gray-500 mb-4">没有找到学习小组</p>
-       
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGroups.map(group => (
-              <StudyGroupCard key={group.id} group={{ 
-                ...group, 
-                maxMembers: group.max_members, 
-                imageUrl: group.image_url 
-              }} />
+              <StudyGroupCard key={group.id} group={group} onDelete={handleDeleteGroup} />
             ))}
           </div>
         )}
-
-     
     </div>
-    
   );
-  
-
 };
- 
 
 export default StudyGroupPage;

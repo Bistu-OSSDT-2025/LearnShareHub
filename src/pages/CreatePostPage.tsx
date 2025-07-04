@@ -12,7 +12,6 @@ import { useAuth } from '@/hooks/useAuth';
 export default function CreatePostPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState('');
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -45,7 +44,6 @@ export default function CreatePostPage() {
         content,
         user_id: user.id,
         subject_id: parseInt(selectedSubject, 10),
-        tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       });
       navigate('/');
     } catch (error) {
@@ -93,15 +91,6 @@ export default function CreatePostPage() {
             placeholder="在此处输入帖子内容..."
             rows={6}
             required
-          />
-        </div>
-        <div className="mb-4">
-          <Label htmlFor="tags">标签 (用逗号分隔)</Label>
-          <Input
-            id="tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="例如: React, TypeScript, Supabase"
           />
         </div>
         <Button type="submit" disabled={loading}>
